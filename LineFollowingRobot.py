@@ -17,19 +17,21 @@ lsBl.MODE_REFLECT = 'REFLECT'
 
 Loop = 1000
 
-file1 = open("test.txt", "w")
 for a in range(0, Loop):
     valueWh = lsWh.value()
     valueBl = lsBl.value()
 
-    mB.run_forever(speed_sp = 400)
-    mC.run_forever(speed_sp = 400)
+    mB.run_forever(speed_sp= -400)
+    mC.run_forever(speed_sp= -400)
+
+    print (valueWh)
+    print (valueBl)
     if valueWh < 500 :
-        mB.stop()
-        sleep(5)
+        mB.stop(stop_action="hold")
+        sleep(1)
     if valueBl < 500 :
-        mC.stop()
-        sleep(5)
+        mC.stop(stop_action="hold")
+        sleep(1)
 
 
 
