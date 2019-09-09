@@ -15,23 +15,24 @@ mC = LargeMotor('outC')
 lsWh.MODE_REFLECT = 'REFLECT'
 lsBl.MODE_REFLECT = 'REFLECT'
 
-Loop = 1000
+Loop = 10000
 
 for a in range(0, Loop):
     valueWh = lsWh.value()
     valueBl = lsBl.value()
 
-    mB.run_forever(speed_sp= -400)
-    mC.run_forever(speed_sp= -400)
+    mB.run_forever(speed_sp= -200)
+    mC.run_forever(speed_sp= -200)
 
-    print (valueWh)
-    print (valueBl)
-    if valueWh < 500 :
-        mB.stop(stop_action="hold")
-        sleep(1)
-    if valueBl < 500 :
-        mC.stop(stop_action="hold")
-        sleep(1)
+    #print (valueWh)
+    #sleep(2)
+
+    if valueWh < 481 :
+        mB.run_forever(speed_sp= 110)
+
+    if valueBl < 395 :
+        mC.run_forever(speed_sp= 110)
+
 
 
 
