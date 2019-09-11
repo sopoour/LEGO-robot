@@ -21,17 +21,20 @@ for a in range(0, Loop):
     valueWh = lsWh.value()
     valueBl = lsBl.value()
 
-    mB.run_forever(speed_sp= -200)
-    mC.run_forever(speed_sp= -200)
+    mB.run_forever(speed_sp= -400)
+    mC.run_forever(speed_sp= -400)
 
     #print (valueWh)
     #sleep(2)
+    if valueBl < 482 and valueWh < 392 :
+        mB.run_forever(speed_sp= -150)
 
-    if valueWh < 481 :
-        mB.run_forever(speed_sp= 110)
+    if valueWh < 482 :
+        mB.run_forever(speed_sp= 300)
 
-    if valueBl < 395 :
-        mC.run_forever(speed_sp= 110)
+    if valueBl < 392 :
+        mC.run_forever(speed_sp= 300)
+
 
 
 
