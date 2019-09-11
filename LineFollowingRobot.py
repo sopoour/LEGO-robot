@@ -31,6 +31,21 @@ for a in range(0, Loop):
     if valueBl < 390 :
         mC.run_forever(speed_sp= 300)
 
+    mB.run_forever(speed_sp= -400)
+    mC.run_forever(speed_sp= -400)
+
+    #print (valueWh)
+    #sleep(2)
+    if valueBl < 482 and valueWh < 392 :
+        mB.run_forever(speed_sp= -150)
+
+    if valueWh < 482 :
+        mB.run_forever(speed_sp= 300)
+
+    if valueBl < 392 :
+        mC.run_forever(speed_sp= 300)
+
+
 
 
 
