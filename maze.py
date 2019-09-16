@@ -4,6 +4,9 @@ from ev3dev.ev3 import *
 from ev3dev2.sensor.lego import LightSensor
 from time import sleep
 
+BLUE_CONS = 480
+WHITE_CONS = 470
+MIDDLE_CONS = 500
 
 def loop (lsWh, lsBl, lsM, mBl, mWh) :
 
@@ -23,33 +26,35 @@ def loop (lsWh, lsBl, lsM, mBl, mWh) :
         #on edge: 500
         #off line: 540
 
-        if (valueWh < 480 and valueM < 445) or (valueM < 445 and valueBl < 388) :
+        if (valueWh < WHITE_CONS and valueM < MIDDLE_CONS) or (valueM < MIDDLE_CONS and valueBl < BLUE_CONS) :
             intersection(valueWh, valueBl, valueM, mWh, mBl)
 
-        followLine(valueWh, valueBl)
+        else :
+            followLine(valueWh, valueBl)
 
 
 #def planner (valueWh, valueBl, valueM, dir):
 
 def intersection (valueWh, valueBl, valueM, mWh, mBl):
-    if valueWh < 480 and valueBl < 388 and valueM < 445 :
-        mBl.run_forever(speed_sp= 300)
-        mWh.run_forever(speed_sp= 300)
+    #if valueWh < WHITE_CONS and valueBl < BLUE_CONS and valueM < MIDDLE_CONS :
+    #    mBl.run_forever(speed_sp= 300)
+    #    mWh.run_forever(speed_sp= 300)
 
-    if valueWh < 480 and valueM < 445 :
+    if valueWh < WHITE_CONS and valueM < MIDDLE_CONS :
         mWh.run_forever(speed_sp=-200)
 
-    if valueM < 445 and valueBl < 388 :
+    elif valueM < MIDDLE_CONS and valueBl < BLUE_CONS :
         mBl.run_forever(speed_sp=-200)
 
 def followLine (valueWh, valueBl) :
-    #if valueWh < 480 and valueBl < 388 :
-     #   mBl.run_forever(speed_sp= 150)
+    if valueWh < WHITE_CONS and valueBl < BLUE_CONS :
+        mBl.run_forever(speed_sp= 150)
+        mWh.run_forever(speed_sp= 150)
 
-    if valueWh < 478 :
+    elif valueWh < WHITE_CONS :
         mBl.run_forever(speed_sp= -300)
 
-    if valueBl < 388 :
+    elif valueBl < BLUE_CONS :
         mWh.run_forever(speed_sp= -300)
 
 
