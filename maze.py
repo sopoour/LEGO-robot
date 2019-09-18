@@ -4,11 +4,25 @@ from ev3dev.ev3 import *
 from ev3dev2.sensor.lego import LightSensor
 from time import sleep
 
+
+# Values for WHITE
+# OFF: 655-658
+# EDGE: 670-676
+# ON: 431
+
+#Values for BLUE:
+# OFF: 640-642
+# EDGE: 630-636
+# ON: 471
+
+#Values for MIDDLE:
+# OFF: 733-746
+# EDGE: 714-722
+# ON: 482-519
+
 BLUE_CONS = 480
 WHITE_CONS = 500
 MIDDLE_CONS = 500
-
-
 
 SPEED_FORW = 300
 SPEED_BACK = -250
