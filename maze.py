@@ -4,7 +4,6 @@ from ev3dev.ev3 import *
 from ev3dev2.sensor.lego import LightSensor
 from time import sleep
 
-
 # Values for WHITE
 # OFF: 655-658
 # EDGE: 670-676
@@ -20,11 +19,11 @@ from time import sleep
 # EDGE: 714-722
 # ON: 482-519
 
-BLUE_CONS = 480
-WHITE_CONS = 500
-MIDDLE_CONS = 500
+BLUE_CONS = 390
+WHITE_CONS = 480
+MIDDLE_CONS = 400
 
-SPEED_FORW = 300
+SPEED_FORW = 200
 SPEED_BACK = -250
 
 def loop (lsWh, lsBl, lsM, mBl, mWh) :
@@ -38,51 +37,52 @@ def loop (lsWh, lsBl, lsM, mBl, mWh) :
         valueBl = lsBl.value()
         valueM = lsM.value()
 
+        print(valueWh)
+
+
         goStraight()
         #if (valueWh < WHITE_CONS and valueM < MIDDLE_CONS) or (valueM < MIDDLE_CONS and valueBl < BLUE_CONS) :
             #intersection(valueWh, valueBl, valueM, mWh, mBl)
 
         #else :
-        followLine(Bcu, Wcu, lsWh, lsBl, valueWh, valueBl)
+        followLine(Bcu, Wcu, lsWh, lsBl, lsM, valueWh, valueBl, valueM)
 
 
 #def planner (valueWh, valueBl, valueM, dir):
-
-def intersection (mWh, mBl):
+#def intersection (mWh, mBl):
     #if valueWh < WHITE_CONS and valueBl < BLUE_CONS and valueM < MIDDLE_CONS :
-    #    mBl.run_forever(speed_sp= 300)
-    #    mWh.run_forever(speed_sp= 300)
+     #  goStraight()
+      # sound.beep().wait()
 
-    #if valueWh < WHITE_CONS and valueM < MIDDLE_CONS :
-     #   mWh.run_forever(speed_sp=SPEED_BACK)
+    #elif valueWh < WHITE_CONS and valueM < MIDDLE_CONS :
+     #   turnLeft()
 
     #elif valueM < MIDDLE_CONS and valueBl < BLUE_CONS :
-     #   mBl.run_forever(speed_sp=SPEED_BACK)
-    #turnLeft()
-    sleep(2)
-    turnLeft()
+     #   turnRight()
 
-def followLine (Bcu, Wcu, lsWh, lsBl, valueWh, valueBl) :
-    #if valueWh < WHITE_CONS and valueBl < BLUE_CONS :
-     #   goStraight()
+def followLine (Bcu, Wcu, lsWh, lsBl, lsM, valueWh, valueBl, valueM) :
+    if valueWh < WHITE_CONS and valueBl < BLUE_CONS:
+        goStraight()
 
     if valueWh < WHITE_CONS :
-        if valueBl < BLUE_CONS :
-            intersection(mWh, mBl)
-        else :
-            goStraight()
-            newVal1 = lsBl.value()
-            if newVal1 < BLUE_CONS :
-                intersection(mWh, mBl)
+        turnLeft()
+        #if valueBl < BLUE_CONS :
+         #   intersection(mWh, mBl)
+        #else :
+         #   goStraight()
+          #  newVal1 = lsBl.value()
+           # if newVal1 < BLUE_CONS :
+                #intersection(mWh, mBl)
 
     elif valueBl < BLUE_CONS :
-        if valueWh < WHITE_CONS :
-            intersection(mWh, mBl)
-        else :
-            goStraight()
-            newVal1 = lsWh.value()
-            if newVal1 < WHITE_CONS :
-                intersection(mWh, mBl)
+        turnRight()
+        #if valueWh < WHITE_CONS :
+            #intersection(mWh, mBl)
+        #else :
+            #goStraight()
+            #newVal1 = lsWh.value()
+            #if newVal1 < WHITE_CONS :
+                #intersection(mWh, mBl)
 
 
 
