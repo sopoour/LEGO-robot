@@ -26,8 +26,8 @@ def loop (lsWh, lsBl, lsM, mBl, mWh) :
         #on edge: 500
         #off line: 540
 
-        if (valueWh < WHITE_CONS and valueM < MIDDLE_CONS) or (valueM < MIDDLE_CONS and valueBl < BLUE_CONS) :
-            intersection(valueWh, valueBl, valueM, mWh, mBl)
+        #if (valueWh < WHITE_CONS and valueM < MIDDLE_CONS) or (valueM < MIDDLE_CONS and valueBl < BLUE_CONS) :
+         #   intersection(valueWh, valueBl, valueM, mWh, mBl)
 
         else :
             followLine(valueWh, valueBl)
