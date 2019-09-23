@@ -19,8 +19,8 @@ from time import sleep
 # EDGE: 714-722
 # ON: 482-519
 
-BLUE_CONS = 390
-WHITE_CONS = 480
+WHITE_CONS = 600
+BLUE_CONS = 550
 MIDDLE_CONS = 400
 
 SPEED_FORW = 200
@@ -30,29 +30,24 @@ def loop (lsWh, lsBl, lsM, mBl, mWh) :
 
     Loop = 10000
 
-    Wcu = 0
-    Bcu = 0
     for a in range(0, Loop):
         valueWh = lsWh.value()
         valueBl = lsBl.value()
         valueM = lsM.value()
-
-        print(valueWh)
-
 
         goStraight()
         #if (valueWh < WHITE_CONS and valueM < MIDDLE_CONS) or (valueM < MIDDLE_CONS and valueBl < BLUE_CONS) :
             #intersection(valueWh, valueBl, valueM, mWh, mBl)
 
         #else :
-        followLine(Bcu, Wcu, lsWh, lsBl, lsM, valueWh, valueBl, valueM)
+        followLine(lsWh, lsBl, lsM, valueWh, valueBl, valueM, mBl, mWh)
 
 
 #def planner (valueWh, valueBl, valueM, dir):
 #def intersection (mWh, mBl):
-    #if valueWh < WHITE_CONS and valueBl < BLUE_CONS and valueM < MIDDLE_CONS :
-     #  goStraight()
-      # sound.beep().wait()
+ #   if valueWh < WHITE_CONS and valueBl < BLUE_CONS and valueM < MIDDLE_CONS :
+  #     goStraight()
+   #    sound.beep().wait()
 
     #elif valueWh < WHITE_CONS and valueM < MIDDLE_CONS :
      #   turnLeft()
@@ -60,9 +55,10 @@ def loop (lsWh, lsBl, lsM, mBl, mWh) :
     #elif valueM < MIDDLE_CONS and valueBl < BLUE_CONS :
      #   turnRight()
 
-def followLine (Bcu, Wcu, lsWh, lsBl, lsM, valueWh, valueBl, valueM) :
+def followLine (lsWh, lsBl, lsM, valueWh, valueBl, valueM, mBl, mWh) :
     if valueWh < WHITE_CONS and valueBl < BLUE_CONS:
-        goStraight()
+        Sound.beep()
+        turnRight()
 
     if valueWh < WHITE_CONS :
         turnLeft()
@@ -74,7 +70,7 @@ def followLine (Bcu, Wcu, lsWh, lsBl, lsM, valueWh, valueBl, valueM) :
            # if newVal1 < BLUE_CONS :
                 #intersection(mWh, mBl)
 
-    elif valueBl < BLUE_CONS :
+    if valueBl < BLUE_CONS :
         turnRight()
         #if valueWh < WHITE_CONS :
             #intersection(mWh, mBl)

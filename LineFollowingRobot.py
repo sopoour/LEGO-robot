@@ -32,12 +32,12 @@ for a in range(0, Loop):
     #f valueBl < 390 :
      #   mC.run_forever(speed_sp= -150)
 
-    print("Value WH: ", valueWh)
-    sleep(1)
+    #print("Value WH: ", valueWh)
+    #sleep(1)
     print("Value BL: ", valueBl)
-    sleep(1)
-    print("value M: ", valueM)
-    sleep(1)
+    sleep(0.7)
+    #print("value M: ", valueM)
+    #sleep(1)
 
     #if valueBl < 482 and valueWh < 392 :
      #   mB.run_forever(speed_sp= -150)
