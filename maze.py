@@ -2,8 +2,7 @@
 
 from ev3dev.ev3 import *
 from ev3dev2.sensor.lego import LightSensor
-from time import sleep
-
+from time import sleep, time
 WHITE_CONS = 600
 BLUE_CONS = 550
 MIDDLE_CONS = 550
@@ -15,7 +14,8 @@ MIDDLE_CONS_LINE = 540
 SPEED_FORW = 200
 SPEED_BACK = -250
 
- positionIntersection=0
+starttime=time()
+
 
 def loop (lsWh, lsBl, lsM, mBl, mWh) :
 
