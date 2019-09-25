@@ -1,6 +1,15 @@
 from collections import deque
 
-def main(graph, start, goal):
+def main(graph, robotPos, robotDir, canPos, canGoal):
+    path = planner(graph, robotPos, canPos)
+
+    if path:
+        print(path)
+
+    else:
+        print('no path found')
+
+def planner(graph, start, goal):
     if start == goal:
         return [start]
     visited = {start}
@@ -9,14 +18,21 @@ def main(graph, start, goal):
     while queue:
         current, path = queue.popleft()
         visited.add(current)
-        for neighbor in graph[current]:
-            if neighbor == goal:
-                return path + [current, neighbor]
-            if neighbor in visited:
-                continue
-            queue.append((neighbor, path + [current]))
-            visited.add(neighbor)
+        for neighbour in graph[current]:
+            if(checkIfValidMove(graph[current], neighbour))
+              if neighbour == goal:
+                  return path + [current, neighbour]
+              if neighbour in visited:
+                  continue
+              queue.append((neighbour, path + [current]))
+              visited.add(neighbour)
     return None  #No path found
+
+
+def checkIfValidMove(current, neighbour):
+
+
+
 
 if __name__ == '__main__':
     graph = {
@@ -38,10 +54,7 @@ if __name__ == '__main__':
         '15': ['11', '14'],
         }
 
-    path = main(graph, '0', '15')
-
-    if path:
-        print(path)
-
-    else:
-        print('no path found')
+    robotPos = '1'
+    robotDir = '0'
+    canPos = '6'
+    canGoal = '10'
