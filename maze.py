@@ -3,7 +3,6 @@
 from ev3dev.ev3 import *
 from ev3dev2.sensor.lego import LightSensor
 from time import sleep, time
-
 WHITE_CONS = 600
 BLUE_CONS = 550
 MIDDLE_CONS = 550
@@ -14,6 +13,8 @@ MIDDLE_CONS_LINE = 540
 
 SPEED_FORW = 200
 SPEED_BACK = -250
+
+starttime=time()
 
 
 
@@ -76,12 +77,19 @@ def  goStraightIntersection():
     mBl.wait_while('running')
 
 def  AroundIntersection():
+    mWh.run_to_rel_pos(position_sp=-50, speed_sp=SPEED_BACK, stop_action="brake")
+    mBl.run_to_rel_pos(position_sp=-50, speed_sp=SPEED_BACK, stop_action="brake")
+    # wait for both motors to complete their movements
+    mWh.wait_while('running')
+    mBl.wait_while('running')
+
     mWh.run_to_rel_pos(position_sp=270, speed_sp=SPEED_BACK, stop_action="brake")
     mBl.run_to_rel_pos(position_sp=-270, speed_sp=SPEED_BACK, stop_action="brake")
     # wait for both motors to complete their movements
     mWh.wait_while('running')
     mBl.wait_while('running')
 
+<<<<<<< HEAD
 def nextStep(path, robotPos, robotDir, canPos, canGoal):
     #0 = Up
     #1 = Right
@@ -161,6 +169,8 @@ def nextStep(path, robotPos, robotDir, canPos, canGoal):
                 AroundIntersection()
 
 
+=======
+>>>>>>> ae4df2553cc84fdfd1fe70a422b698d9c8c745d7
 
 
 if __name__ == '__main__':
