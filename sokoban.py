@@ -1,19 +1,21 @@
 from collections import deque
 
 def main(graph, robotPos, robotDir, canPos, canGoal):
+    #robotToCan = planner(graph, robotPos, canPos[0])
     path = planner(graph, canPos[0], canGoal[0])
-    path2 = planner(graph, canPos[1], canGoal[1])
+    #path2 = planner(graph, canPos[1], canGoal[1])
 
-    robotGoal = int(canGoal[0]) - 8
-    print("robot goal", robotGoal)
-    robotGoal1 = str(robotGoal)
-    print("robot goal2", robotGoal1)
-    robotGoal2 = planner(graph, robotPos, robotGoal1)
+    #robotGoal = int(canGoal[0]) - 8
+    #print("robot goal", robotGoal)
+    #robotGoal1 = str(robotGoal)
+    #print("robot goal2", robotGoal1)
+    #robotGoal2 = planner(graph, robotPos, robotGoal1)
 
-    if path and path2:
+    if path:
         print(path)
-        print(path2)
-        print("robotgoal22", robotGoal2)
+        print(canPos[0])
+        #print(path2)
+        #print("robotgoal22", robotGoal2)
 
     else:
         print('no path found')
@@ -30,12 +32,14 @@ def planner(graph, start, goal):
         for neighbour in graph[current]:
           print("neighbour: ",neighbour)
           #if(checkIfValidMove(neighbour)):
-          if neighbour == goal:
-              return path + [current, neighbour]
-          if neighbour in visited:
-              continue
-          queue.append((neighbour, path + [current]))
-          visited.add(neighbour)
+          if neighbour != canPos[0] and neighbour != canPos[1] and  neighbour != canPos[2]:
+            if neighbour == goal:
+                canPos[0] = goal
+                return path + [current, neighbour]
+            if neighbour in visited:
+                continue
+            queue.append((neighbour, path + [current]))
+            visited.add(neighbour)
     return None  #No path found
 
 
@@ -68,7 +72,7 @@ if __name__ == '__main__':
 
     robotPos = '12'
     robotDir = '0'
-    canPos = ['5', '6']
-    canGoal = ['10', '1']
+    canPos = ['8', '4', '6']
+    canGoal = ['0']
 
     main(graph, robotPos, robotDir, canPos, canGoal)
