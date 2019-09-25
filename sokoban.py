@@ -54,7 +54,7 @@ if __name__ == '__main__':
         '15': ['11', '14'],
         }
 
-    robotPos = '1'
+    robotPos = '12'
     robotDir = '0'
     canPos = '6'
     canGoal = '10'
