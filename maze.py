@@ -17,7 +17,7 @@ SPEED_BACK = -250
 
 
 
-def loop (lsWh, lsBl, lsM, mBl, mWh, StartTime, OurTime) :
+def loop (lsWh, lsBl, lsM, mBl, mWh, StartTime, OurTime, path, robotPos, robotDir, canPos, canGoal) :
 
     Loop = 10000
 
@@ -27,13 +27,13 @@ def loop (lsWh, lsBl, lsM, mBl, mWh, StartTime, OurTime) :
         valueM = lsM.value()
 
         goStraight()
-        followLine(lsWh, lsBl, lsM, valueWh, valueBl, valueM, mBl, mWh, OurTime, StartTime)
+        followLine(lsWh, lsBl, lsM, valueWh, valueBl, valueM, mBl, mWh, OurTime, StartTime, path, robotPos, robotDir, canPos, canGoal)
 
 
-def followLine (lsWh, lsBl, lsM, valueWh, valueBl, valueM, mBl, mWh, OurTime, StartTime) :
+def followLine (lsWh, lsBl, lsM, valueWh, valueBl, valueM, mBl, mWh, OurTime, StartTime, path, robotPos, robotDir, canPos, canGoal) :
     if valueWh < WHITE_CONS_LINE and valueBl < BLUE_CONS_LINE and valueM < MIDDLE_CONS_LINE and OurTime < (StartTime - 2):
         Sound.beep()
-        AroundIntersection()
+        nextStep(path, robotPos, robotDir, canPos, canGoal)
         OurTime = StartTime
 
     if valueWh < WHITE_CONS :
@@ -82,6 +82,87 @@ def  AroundIntersection():
     mWh.wait_while('running')
     mBl.wait_while('running')
 
+def nextStep(path, robotPos, robotDir, canPos, canGoal):
+    #0 = Up
+    #1 = Right
+    #2 = Down
+    #3 = Left
+
+    if robotDir == 0:
+        for i in path - 1:
+            #Go straight
+            if path[i] - path[i + 1] == 4:
+                goStraightIntersection()
+            #Turn 180°
+            if path[i] - path[i + 1] == -4:
+                robotDir = 2
+                AroundIntersection()
+            #Go left
+            if path[i] - path[i + 1] == 1:
+                robotDir = 3
+                turnLeftIntersection()
+            #Go right
+            if path[i] - path[i + 1] == -1:
+                robotDir = 1
+                turnRightIntersection()
+
+    if robotDir == 1:
+        for i in path:
+            #Go left
+            if path[i] - path[i + 1] == 4:
+                robotDir = 0
+                turnLeftIntersection()
+            #Go right
+            if path[i] - path[i + 1] == -4:
+                robotDir = 2
+                turnRightIntersection()
+            #Turn 180°
+            if path[i] - path[i + 1] == 1:
+                robotDir = 3
+                AroundIntersection()
+            #Go straight
+            if path[i] - path[i + 1] == -1:
+                goStraightIntersection()
+
+    if robotDir == 2:
+        for i in path:
+            #Turn 180°
+            if path[i] - path[i + 1] == 4:
+                robotDir = 0
+                AroundIntersection()
+            #Go straight
+            if path[i] - path[i + 1] == -4:
+                goStraightIntersection()
+            #Go right
+            if path[i] - path[i + 1] == 1:
+                robotDir = 3
+                turnRightIntersection()
+            #Go left
+            if path[i] - path[i + 1] == -1:
+                robotDir = 1
+                turnLeftIntersection()
+
+    if robotDir == 3:
+        for i in path:
+            #Go right
+            if path[i] - path[i + 1] == 4:
+                robotDir = 0
+                turnRightIntersection()
+            #Go left
+            if path[i] - path[i + 1] == -4:
+                robotDir = 2
+                turnLeftIntersection()
+            #Go straight
+            if path[i] - path[i + 1] == 1:
+                goStraightIntersection()
+            #Turn 180°
+            if path[i] - path[i + 1] == -1:
+                robotDir = 1
+                AroundIntersection()
+
+
+
+
 if __name__ == '__main__':
     # Connect light sensor to input 1 and 4
     lsWh = LightSensor('in4')
@@ -99,4 +180,13 @@ if __name__ == '__main__':
     StartTime = time()
     OurTime = 0
 
-    loop(lsBl, lsWh, lsM, mBl, mWh, StartTime, OurTime)
+    robotPos = 12
+    robotDir = 0
+    canPos = [8, 4, 6]
+    canGoal = [0]
+
+    path = [12, 8, 4]
+
+    #grid = ['0','1','2','3','4','5','6','7','8','9','10','11','12','13','14','15']
+
+    loop(lsBl, lsWh, lsM, mBl, mWh, StartTime, OurTime, path, robotPos, robotDir, canPos, canGoal)
