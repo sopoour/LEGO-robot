@@ -4,90 +4,56 @@ from ev3dev.ev3 import *
 from ev3dev2.sensor.lego import LightSensor
 from time import sleep
 
-# Values for WHITE
-# OFF: 655-658
-# EDGE: 670-676
-# ON: 431
+WHITE_CONS = 600
+BLUE_CONS = 550
+MIDDLE_CONS = 550
 
-#Values for BLUE:
-# OFF: 640-642
-# EDGE: 630-636
-# ON: 471
-
-#Values for MIDDLE:
-# OFF: 733-746
-# EDGE: 714-722
-# ON: 482-519
-
-BLUE_CONS = 390
-WHITE_CONS = 480
-MIDDLE_CONS = 400
+WHITE_CONS_LINE = 460
+BLUE_CONS_LINE = 480
+MIDDLE_CONS_LINE = 540
 
 SPEED_FORW = 200
 SPEED_BACK = -250
+
+ positionIntersection=0
 
 def loop (lsWh, lsBl, lsM, mBl, mWh) :
 
     Loop = 10000
 
-    Wcu = 0
-    Bcu = 0
     for a in range(0, Loop):
         valueWh = lsWh.value()
         valueBl = lsBl.value()
         valueM = lsM.value()
 
-        print(valueWh)
-
-
         goStraight()
-        #if (valueWh < WHITE_CONS and valueM < MIDDLE_CONS) or (valueM < MIDDLE_CONS and valueBl < BLUE_CONS) :
-            #intersection(valueWh, valueBl, valueM, mWh, mBl)
-
-        #else :
-        followLine(Bcu, Wcu, lsWh, lsBl, lsM, valueWh, valueBl, valueM)
+        followLine(lsWh, lsBl, lsM, valueWh, valueBl, valueM, mBl, mWh)
 
 
-#def planner (valueWh, valueBl, valueM, dir):
-#def intersection (mWh, mBl):
-    #if valueWh < WHITE_CONS and valueBl < BLUE_CONS and valueM < MIDDLE_CONS :
-     #  goStraight()
-      # sound.beep().wait()
+def followLine (lsWh, lsBl, lsM, valueWh, valueBl, valueM, mBl, mWh) :
+    if valueWh < WHITE_CONS_LINE and valueBl < BLUE_CONS_LINE and valueM < MIDDLE_CONS_LINE and mBl.position() > positionIntersection :
+        positionIntersection = mBl.position() + 200
+        Sound.beep()
+        turnLeftIntersection()
 
-    #elif valueWh < WHITE_CONS and valueM < MIDDLE_CONS :
-     #   turnLeft()
-
-    #elif valueM < MIDDLE_CONS and valueBl < BLUE_CONS :
-     #   turnRight()
-
-def followLine (Bcu, Wcu, lsWh, lsBl, lsM, valueWh, valueBl, valueM) :
-    if valueWh < WHITE_CONS and valueBl < BLUE_CONS:
-        goStraight()
+        #counter += 1
+        #if counter == 1:
+         #   goStraight()
+        #if counter == 2:
+          # turnLeftIntersection()
+        #if counter == 3:
+         #   turnRightIntersection()
 
     if valueWh < WHITE_CONS :
         turnLeft()
-        #if valueBl < BLUE_CONS :
-         #   intersection(mWh, mBl)
-        #else :
-         #   goStraight()
-          #  newVal1 = lsBl.value()
-           # if newVal1 < BLUE_CONS :
-                #intersection(mWh, mBl)
 
-    elif valueBl < BLUE_CONS :
+    if valueBl < BLUE_CONS :
         turnRight()
-        #if valueWh < WHITE_CONS :
-            #intersection(mWh, mBl)
-        #else :
-            #goStraight()
-            #newVal1 = lsWh.value()
-            #if newVal1 < WHITE_CONS :
-                #intersection(mWh, mBl)
 
 
 
 def turnRight ():
-    mWh.run_forever(speed_sp= SPEED_BACK)
+   mWh.run_forever(speed_sp= SPEED_BACK)
 
 def turnLeft():
     mBl.run_forever(speed_sp= SPEED_BACK)
@@ -96,6 +62,33 @@ def goStraight():
     mBl.run_forever(speed_sp= SPEED_FORW)
     mWh.run_forever(speed_sp= SPEED_FORW)
 
+def turnRightIntersection ():
+   mWh.run_to_rel_pos(position_sp=20, speed_sp=SPEED_BACK, stop_action="brake")
+   mBl.run_to_rel_pos(position_sp=180, speed_sp=SPEED_BACK, stop_action="brake")
+   # wait for both motors to complete their movements
+   mWh.wait_while('running')
+   mBl.wait_while('running')
+
+def turnLeftIntersection ():
+   mWh.run_to_rel_pos(position_sp=180, speed_sp=SPEED_BACK, stop_action="brake")
+   mBl.run_to_rel_pos(position_sp=20, speed_sp=SPEED_BACK, stop_action="brake")
+   # wait for both motors to complete their movements
+   mWh.wait_while('running')
+   mBl.wait_while('running')
+
+def  goStraightIntersection():
+    mWh.run_to_rel_pos(position_sp=150, speed_sp=SPEED_BACK, stop_action="brake")
+    mBl.run_to_rel_pos(position_sp=150, speed_sp=SPEED_BACK, stop_action="brake")
+    # wait for both motors to complete their movements
+    mWh.wait_while('running')
+    mBl.wait_while('running')
+
+def  AroundIntersection():
+    mWh.run_to_rel_pos(position_sp=180, speed_sp=SPEED_BACK, stop_action="brake")
+    mBl.run_to_rel_pos(position_sp=-180, speed_sp=SPEED_BACK, stop_action="brake")
+    # wait for both motors to complete their movements
+    mWh.wait_while('running')
+    mBl.wait_while('running')
 
 if __name__ == '__main__':
     # Connect light sensor to input 1 and 4
@@ -106,8 +99,8 @@ if __name__ == '__main__':
 
     mBl = LargeMotor('outB')
     mWh = LargeMotor('outC')
-
-    # Put the Mode_reflect to "Reflect"01
+    positionIntersection = mBl.position()
+    # Put the Mode_reflect to "Reflect"
     lsWh.MODE_REFLECT = 'REFLECT'
     lsBl.MODE_REFLECT = 'REFLECT'
     lsM.MODE_REFLECT = 'REFLECT'
