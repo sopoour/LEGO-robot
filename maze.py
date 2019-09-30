@@ -15,11 +15,12 @@ SPEED_FORW = 200
 SPEED_BACK = -250
 i=0
 starttime=time()
+OurTime=0
 
 
-def loop (lsWh, lsBl, lsM, mBl, mWh, StartTime, OurTime, path, robotPos, canPos, canGoal) :
+def loop (lsWh, lsBl, lsM, mBl, mWh, StartTime, path, robotPos, canPos, canGoal) :
 
-    Loop = 10000
+    Loop = 100000
 
     for a in range(0, Loop):
         valueWh = lsWh.value()
@@ -27,14 +28,16 @@ def loop (lsWh, lsBl, lsM, mBl, mWh, StartTime, OurTime, path, robotPos, canPos,
         valueM = lsM.value()
 
         goStraight()
-        followLine(lsWh, lsBl, lsM, valueWh, valueBl, valueM, mBl, mWh, OurTime, StartTime, path, robotPos, canPos, canGoal)
+        followLine(lsWh, lsBl, lsM, valueWh, valueBl, valueM, mBl, mWh, StartTime, path, robotPos, canPos, canGoal)
 
 
-def followLine (lsWh, lsBl, lsM, valueWh, valueBl, valueM, mBl, mWh, OurTime, StartTime, path, robotPos, canPos, canGoal) :
-    if valueWh < WHITE_CONS_LINE and valueBl < BLUE_CONS_LINE and valueM < MIDDLE_CONS_LINE and OurTime < (StartTime - 2):
+def followLine (lsWh, lsBl, lsM, valueWh, valueBl, valueM, mBl, mWh, StartTime, path, robotPos, canPos, canGoal) :
+    global OurTime
+    if (valueWh < WHITE_CONS_LINE and valueBl < BLUE_CONS_LINE and valueM < MIDDLE_CONS_LINE and OurTime < (time() - 3)) or( OurTime+20 >time() and  OurTime < (time() - 3)) :
         Sound.beep()
         nextStep(path, robotPos, canPos, canGoal)
-        OurTime = StartTime
+
+        OurTime = time()
 
     if valueWh < WHITE_CONS :
         turnLeft()
@@ -71,8 +74,16 @@ def turnLeftIntersection():
    print('LeftIntersection')
 
 def  goStraightIntersection():
-    mWh.run_to_rel_pos(position_sp=150, speed_sp=SPEED_BACK, stop_action="brake")
-    mBl.run_to_rel_pos(position_sp=150, speed_sp=SPEED_BACK, stop_action="brake")
+    mWh.run_to_rel_pos(position_sp=50, speed_sp=SPEED_BACK, stop_action="brake")
+    mBl.run_to_rel_pos(position_sp=50, speed_sp=SPEED_BACK, stop_action="brake")
+    # wait for both motors to complete their movements
+    mWh.wait_while('running')
+    mBl.wait_while('running')
+    print('goStraightIntersection')
+
+def  goStraightconer2():
+    mWh.run_to_rel_pos(position_sp=70, speed_sp=SPEED_BACK, stop_action="brake")
+    mBl.run_to_rel_pos(position_sp=90, speed_sp=SPEED_BACK, stop_action="brake")
     # wait for both motors to complete their movements
     mWh.wait_while('running')
     mBl.wait_while('running')
@@ -99,6 +110,7 @@ def nextStep(path, robotPos, canPos, canGoal):
     #3 = Left
     global i
     global robotDir
+
     if robotDir == 0 and i < len(path) - 1:
         #Go straight
         if path[i] - path[i + 1] == 4:
@@ -190,13 +202,14 @@ if __name__ == '__main__':
     OurTime = 0
     i=0
     robotPos = 12
-    robotDir = 0
+    robotDir = 2
     canPos = [8, 4, 6]
     canGoal = [0]
 
-    path = [8, 9, 10, 6,2,3]
+    path = [4,8,12,13,14,15,14,10,9,8,9,5,1,5,4,0,1,2,1]
+   # path = [4,8,12,13,14,15,14,13,12,8,4,5,6,5,1,2,3,7,11,10,6,2,6,10,9,8,9]
 
 
     #grid = ['0','1','2','3','4','5','6','7','8','9','10','11','12','13','14','15']
 
-    loop(lsBl, lsWh, lsM, mBl, mWh, StartTime, OurTime, path, robotPos, canPos, canGoal)
+    loop(lsBl, lsWh, lsM, mBl, mWh, StartTime, path, robotPos, canPos, canGoal)
