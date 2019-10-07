@@ -2,6 +2,7 @@ import shapely
 from shapely.geometry import LinearRing, LineString, Point
 from numpy import sin, cos, pi, sqrt
 from random import random
+#run using ctrl + alt + N
 
 # Constants
 ###########
@@ -52,12 +53,12 @@ for cnt in range(5000):
     ray = LineString([(x, y), (x+cos(q)*2*W,y+sin(q)*2*H) ])  # a line from robot to a point outside arena in direction of q
     s = world.intersection(ray)
     distance = sqrt((s.x-x)**2+(s.y-y)**2)                    # distance to wall
-    
+      
     #simple controller - change direction of wheels every 10 seconds (100*robot_timestep) unless close to wall then turn on spot
     if cnt%100==0:
         if (distance < 0.5):
-            left_wheel_velocity = -((pi/2)/(10/(2*pi)))
-            right_wheel_velocity = (pi/2)/(10/(2*pi))
+            left_wheel_velocity = -((pi/2)*(10/(2*pi)))
+            right_wheel_velocity = ((pi/2)*(10/(2*pi)))
         else:                
             left_wheel_velocity = 10/(2*pi)
             right_wheel_velocity = 10/(2*pi)
