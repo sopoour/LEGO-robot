@@ -56,12 +56,14 @@ for cnt in range(5000):
       
     #simple controller - change direction of wheels every 10 seconds (100*robot_timestep) unless close to wall then turn on spot
     if cnt%100==0:
+        if (distance < -0.5):
+            
         if (distance < 0.5):
-            left_wheel_velocity = -((pi/2)*(10/(2*pi)))
-            right_wheel_velocity = ((pi/2)*(10/(2*pi)))
+            left_wheel_velocity = -0.4
+            right_wheel_velocity = 0.4
         else:                
-            left_wheel_velocity = 10/(2*pi)
-            right_wheel_velocity = 10/(2*pi)
+            left_wheel_velocity = -(2*pi) * (10/(2*pi))
+            right_wheel_velocity = (2*pi) * (10/(2*pi))
         
     #step simulation
     simulationstep()
