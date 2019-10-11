@@ -24,9 +24,9 @@ var two_pi = 0
 
 #multiply 2 and pi=3
 call math.mul(two_pi, 2,3)
-#devide 10 by 
+#devide 10 by two_pi
 call math.div(velocity, 10, two_pi)
-
+#devide dist by pi=3
 call math.div(dist_pi, dist, 3)
 
 
