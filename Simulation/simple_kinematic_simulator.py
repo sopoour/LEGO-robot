@@ -7,7 +7,7 @@ from random import random
 # Constants
 ###########
 R = 0.02  # radius of wheels in meters
-L = 0.095  # distance between wheels in meters
+L = 0.094  # distance between wheels in meters
 
 W = 1.15  # width of arena
 H = 1.95  # height of arena
@@ -55,15 +55,13 @@ for cnt in range(5000):
     distance = sqrt((s.x-x)**2+(s.y-y)**2)                    # distance to wall
       
     #simple controller - change direction of wheels every 10 seconds (100*robot_timestep) unless close to wall then turn on spot
-    if cnt%100==0:
-        if (distance < -0.5):
-            
+    if cnt%100==0:            
         if (distance < 0.5):
-            left_wheel_velocity = -0.4
-            right_wheel_velocity = 0.4
+            left_wheel_velocity = -L*pi/4
+            right_wheel_velocity = L*pi/4
         else:                
-            left_wheel_velocity = -(2*pi) * (10/(2*pi))
-            right_wheel_velocity = (2*pi) * (10/(2*pi))
+            left_wheel_velocity = 10/(2*pi)
+            right_wheel_velocity = 10/(2*pi)
         
     #step simulation
     simulationstep()
