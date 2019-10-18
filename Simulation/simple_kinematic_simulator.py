@@ -74,4 +74,6 @@ for cnt in range(5000):
         file.write( str(x) + ", " + str(y) + ", " + str(cos(q)*0.05) + ", " + str(sin(q)*0.05) + "\n")
 
 file.close()
+
+asebamedulla "ser:name=Thymio-II"
     

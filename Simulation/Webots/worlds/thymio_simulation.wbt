@@ -1,0 +1,19 @@
+#VRML_SIM R2019b utf8
+WorldInfo {
+  basicTimeStep 10
+}
+Viewpoint {
+  orientation -0.2653351460830229 0.9182053805048109 0.29410226021762625 1.7370724573693532
+  position 2.6440509274330055 1.9486747189053566 -0.31007093801831775
+}
+TexturedBackground {
+  texture "factory"
+}
+TexturedBackgroundLight {
+}
+RectangleArena {
+  floorSize 1.19 1.95
+}
+Thymio2 {
+  controller "wall_following"
+}
