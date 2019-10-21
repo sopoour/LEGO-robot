@@ -15,5 +15,5 @@ RectangleArena {
   floorSize 1.19 1.95
 }
 Thymio2 {
-  controller "wall_following"
+  controller "q-controller"
 }

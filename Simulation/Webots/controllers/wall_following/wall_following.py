@@ -1,3 +1,4 @@
+import numpy as np
 from controller import Robot, Motor
 
 TIME_STEP = 64
@@ -5,7 +6,7 @@ TIME_STEP = 64
 MAX_SPEED = 6.28
 
 #distance to the wall
-dist = 1200
+dist = 12
 
 # create the Robot instance.
 robot = Robot()
