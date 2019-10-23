@@ -75,5 +75,5 @@ for cnt in range(5000):
 
 file.close()
 
-asebamedulla "ser:name=Thymio-II"
+#asebamedulla "ser:name=Thymio-II"
     
