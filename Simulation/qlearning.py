@@ -15,25 +15,13 @@ actions = [0, 1, 2]
 #Columns:
 #actions [left, straight, right]
 #Rows: 
-#states [corner left, corner right, left-wall, right-wall, nothing, wall]
+#states [short distance, medium distance, long distance]
 
-reward_env = np.array ([
+reward = np.array ([
 [-500,-500,0], 
 [100,0,0], 
 [0,10,0],
 ])
-
-
-#q_matrix = [
-#[0,0,0], 
-#[0,0,0], 
-#[0,0,0], 
-#[0,0,0],
-#[0,0,0],
-#[0,0,0],
-#[0,0,0],
-#[0,0,0],
-#[0,0,0]]
 
 def policy ():
     #copy the rewards matrix to a new matrix
@@ -58,7 +46,7 @@ def policy ():
        
         #Compute the temporal difference
         #the action here exactly refers to going to the next state
-        TD = reward_env[current_state, next_state] + gamma * Q[next_state, np.argmax(Q[next_state,])] - Q[current_state, next_state]
+        TD = reward[current_state, next_state] + gamma * Q[next_state, np.argmax(Q[next_state,])] - Q[current_state, next_state]
         #Update the Q-Value using the Bellman equation
         Q[current_state,next_state] += alpha * TD
 
