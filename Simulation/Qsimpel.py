@@ -38,13 +38,15 @@ alpha = 0.9 # learning rate
 #define the rewards
 #Columns:actions [left, straight, right], Rows: states [short distance, medium distance, long distance]
 reward = np.array ([
-[-50,-50, 0], 
+[-100,-100, 0], 
 [0,0,50], 
 [0,0,0],
 ])
 
-#Initializing Q-values
+#Initializing Q-values & state
 Q = np.array(np.zeros([3,3]))
+
+old_state = 0
 
 #Map distance to state (short, medium, long)
 def dist_map_state(x):
@@ -54,6 +56,32 @@ def dist_map_state(x):
        return 1
     else:
         return 0
+def merge_dist (distS0, distS2):
+    if distS0 == 0 or distS2 == 0:
+        return 0
+    elif distS0 == 1 or distS2 == 1:
+        return 1
+    else:
+        return 2
+
+def state_action_map(cnt, state_action):
+    if cnt%100==0:
+        if state_action == 0:
+            left_wheel_velocity = -L*pi/4
+            right_wheel_velocity = L*pi/4
+        elif state_action == 1:
+            left_wheel_velocity = 10/(2*pi)
+            right_wheel_velocity = 10/(2*pi)
+        else:                
+            left_wheel_velocity = L*pi/4
+            right_wheel_velocity = -L*pi/4
+
+
+def Q_learning (current_state, state_action):
+    #the action here exactly refers to going to the next state
+    TD = reward[current_state, state_action] + gamma * Q[state_action, np.argmax(Q[state_action,])] - Q[current_state, state_action]
+    #Update the Q-Value using the Bellman equation
+    Q[current_state,state_action] += alpha * TD   
 
 # Kinematic model
 #################
@@ -71,19 +99,11 @@ def simulationstep():
         y += v_y * simulation_timestep
         q += omega * simulation_timestep
 
-def merge_dist (distS0, distS2):
-    if distS0 == 0 or distS2 == 0:
-        return 0
-    elif distS0 == 1 or distS2 == 1:
-        return 1
-    else:
-        return 2
-
 # Simulation loop
 #################
 file = open("trajectory.dat", "w")
 fileSen = open("sensor.dat", "w")
-for cnt in range(100000):
+for cnt in range(50000):
     #Sensor and Distance Set-up
     ###########################
     #simple single-ray for each sensor 
@@ -100,49 +120,57 @@ for cnt in range(100000):
     
     #distance = sqrt((s.x-x)**2+(s.y-y)**2)                 
     #distance to wall
-    distS0 = dist_map_state((sqrt((s0.x-x)**2+(s0.y-y)**2)-L)*100) 
-    distS2 =dist_map_state((sqrt((s2.x-x)**2+(s2.y-y)**2)-L) *100)
+    distS0_check = ((sqrt((s0.x-x)**2+(s0.y-y)**2)-L)*100) 
+    distS2_check = ((sqrt((s2.x-x)**2+(s2.y-y)**2)-L) *100)
+
+    if(distS0_check < 0.5 and distS2_check < 0.5):
+        distS0 = dist_map_state(distS0_check)
+        distS2 = dist_map_state(distS2_check)
+
     #distS4 = dist_map_state((sqrt((s4.x-x)**2+(s4.y-y)**2)-L)*100)
 
     #Q_learning Algorithm
     #####################
 
     #Pick-up state randomly
-    current_state = merge_dist(distS0, distS2)
+    
+    
+    current_state = np.random.randint(0,3)
     
     #Pick an action randomly from the list of playable actions leading us to the next state
-    next_state = np.random.randint(0,3)
-    
-    #Compute the temporal difference
-    #the action here exactly refers to going to the next state
-    TD = reward[current_state, next_state] + gamma * Q[next_state, np.argmax(Q[next_state,])] - Q[current_state, next_state]
-    #Update the Q-Value using the Bellman equation
-    Q[current_state,next_state] += alpha * TD    
+    state_action = np.random.randint(0,3)
 
-    #Controller = Action Mapping
-    ###########
-   
-    #simple controller - change direction of wheels every 10 seconds (100*robot_timestep) unless close to wall then turn on spot           
-    if next_state == 0:
-        left_wheel_velocity = -L*pi/4
-        right_wheel_velocity = L*pi/4
-    elif next_state == 1:
-       left_wheel_velocity = 10/(2*pi)
-       right_wheel_velocity = 10/(2*pi)
-    else:                
-        left_wheel_velocity = L*pi/4
-        right_wheel_velocity = -L*pi/4
-    
+    if(current_state not old_state):
+        if (cnt >= 30000 and cnt %100 == 0) or (cnt < 30000 and cnt > 1000):        
+            Q_learning (current_state, state_action)  
+
+            old_state = current_state
+            #print([current_state, state_action])
+            #Controller = Action Mapping
+            ###########
+        
+            #simple controller - change direction of wheels every 10 seconds (100*robot_timestep) unless close to wall then turn on spot           
+            state_action_map(cnt, state_action)
+
+
+    else:
+        #Read from Q-table
+        state_action = np.argmax(Q[current_state,])
+        state_action_map(cnt, state_action)
+        
+        Q_learning (current_state, state_action)
+
     #step simulation
     simulationstep()
 
     #check collision with arena walls 
     if (world.distance(Point(x,y))<L/2):
-        break
+        x = 0.0
+        y = 0.0
         
     if cnt%50==0:
         file.write( str(x) + ", " + str(y) + ", " + str(cos(q)*0.05) + ", " + str(sin(q)*0.05) + "\n")
-        fileSen.write( str(distS0) + ", " + str(distS2) + "\n")
+        fileSen.write( str(distS0_check) + ", " + str(distS2_check) + "\n")
 
 print(Q)
 file.close()
