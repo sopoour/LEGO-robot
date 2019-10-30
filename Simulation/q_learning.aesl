@@ -1,0 +1,65 @@
+<!DOCTYPE aesl-source>
+<network>
+
+
+<!--list of global events-->
+
+
+<!--list of constants-->
+
+
+<!--show keywords state-->
+<keywords flag="true"/>
+
+
+<!--node thymio-II-->
+<node nodeId="22471" name="thymio-II">#Variable declaration
+var velocity = 0
+#distance to the wall
+var dist = 1200
+#basis of (dist * pi)
+var dist_pi = 0
+#basis of (2 * pi)
+var two_pi = 0
+
+#multiply 2 and pi=3
+call math.mul(two_pi, 2,3)
+#devide 10 by two_pi
+call math.div(velocity, 10, two_pi)
+#devide dist by pi=3
+call math.div(dist_pi, dist, 3)
+
+
+onevent prox
+
+if prox.horizontal[0] > dist or prox.horizontal[1] > dist and prox.horizontal[2] > dist  then
+	#Turn right
+	call math.div(velocity, dist_pi, 4)
+   motor.left.target =  velocity
+   motor.right.target = - velocity
+    
+elseif prox.horizontal[2] > dist and prox.horizontal[3] > dist or prox.horizontal[4] > dist then
+	#Turn left
+	call math.div(velocity, dist_pi, 4)
+	motor.left.target = - velocity 
+   motor.right.target = velocity
+    
+else 
+	 motor.left.target = 400
+    motor.right.target = 400
+
+end
+
+
+#prox.ground.delta[0] : bottom left
+#prox.ground.delta[1] : bottom right
+#prox.horizontal[0] : front left
+#prox.horizontal[1] : front middle-left
+#prox.horizontal[2] : front middle
+#prox.horizontal[3] : front middle-right
+#prox.horizontal[4] : front right
+#prox.horizontal[5] : back left
+#prox.horizontal[6] : back right</node>
+
+
+</network>

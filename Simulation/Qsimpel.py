@@ -56,23 +56,27 @@ def dist_map_state(x):
        return 1
     else:
         return 0
+
 def merge_dist (distS0, distS2):
-    if distS0 == 0 or distS2 == 0:
-        return 0
-    elif distS0 == 1 or distS2 == 1:
+    if distS0 == 1 or distS2 == 1:
         return 1
+    elif distS0 == 0 or distS2 == 0:
+        return 0
     else:
         return 2
 
 def state_action_map(cnt, state_action):
     if cnt%100==0:
         if state_action == 0:
+            print("I'm left")
             left_wheel_velocity = -L*pi/4
             right_wheel_velocity = L*pi/4
         elif state_action == 1:
+            print("I'm straight")
             left_wheel_velocity = 10/(2*pi)
             right_wheel_velocity = 10/(2*pi)
-        else:                
+        else:         
+            print("I'm right")       
             left_wheel_velocity = L*pi/4
             right_wheel_velocity = -L*pi/4
 
@@ -120,40 +124,40 @@ for cnt in range(50000):
     
     #distance = sqrt((s.x-x)**2+(s.y-y)**2)                 
     #distance to wall
-    distS0_check = ((sqrt((s0.x-x)**2+(s0.y-y)**2)-L)*100) 
-    distS2_check = ((sqrt((s2.x-x)**2+(s2.y-y)**2)-L) *100)
+    distS0 = ((sqrt((s0.x-x)**2+(s0.y-y)**2)-L)*100) 
+    distS2 = ((sqrt((s2.x-x)**2+(s2.y-y)**2)-L) *100)
 
-    if(distS0_check < 0.5 and distS2_check < 0.5):
-        distS0 = dist_map_state(distS0_check)
-        distS2 = dist_map_state(distS2_check)
+    if(distS0 < 50 and distS2 < 50):
+        distS0 = dist_map_state(distS0)
+        distS2 = dist_map_state(distS2)
+    
 
     #distS4 = dist_map_state((sqrt((s4.x-x)**2+(s4.y-y)**2)-L)*100)
 
     #Q_learning Algorithm
     #####################
 
-    #Pick-up state randomly
+    #Pick-up current state
     
-    
-    current_state = np.random.randint(0,3)
+    current_state = merge_dist(distS0, distS2)
+    #print("Current state: ", current_state)
     
     #Pick an action randomly from the list of playable actions leading us to the next state
     state_action = np.random.randint(0,3)
 
-    if(current_state not old_state):
-        if (cnt >= 30000 and cnt %100 == 0) or (cnt < 30000 and cnt > 1000):        
-            Q_learning (current_state, state_action)  
+    Q_learning (current_state, state_action)  
 
-            old_state = current_state
-            #print([current_state, state_action])
-            #Controller = Action Mapping
-            ###########
-        
-            #simple controller - change direction of wheels every 10 seconds (100*robot_timestep) unless close to wall then turn on spot           
-            state_action_map(cnt, state_action)
+    #print([current_state, state_action])
+    #Controller = Action Mapping
+    ###########
 
+    #simple controller - change direction of wheels every 10 seconds (100*robot_timestep) unless close to wall then turn on spot           
+    state_action_map(cnt, state_action)
 
-    else:
+    current_state = old_state
+
+    if (old_state == current_state):
+        print("I'm here")
         #Read from Q-table
         state_action = np.argmax(Q[current_state,])
         state_action_map(cnt, state_action)
@@ -170,7 +174,7 @@ for cnt in range(50000):
         
     if cnt%50==0:
         file.write( str(x) + ", " + str(y) + ", " + str(cos(q)*0.05) + ", " + str(sin(q)*0.05) + "\n")
-        fileSen.write( str(distS0_check) + ", " + str(distS2_check) + "\n")
+        fileSen.write( str(distS0) + ", " + str(distS2) + "\n")
 
 print(Q)
 file.close()
