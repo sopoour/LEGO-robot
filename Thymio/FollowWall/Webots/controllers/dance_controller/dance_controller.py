@@ -1,50 +1,75 @@
-import shapely
-from shapely.geometry import LinearRing, LineString, Point
-from numpy import sin, cos, pi, sqrt
-from random import random
-import time
+import numpy as np
 import random
-#run using ctrl + alt + N
+from controller import Robot, Motor
 
-# Constants
-###########
-R = 0.02  # radius of wheels in meters
-L = 0.094  # distance between wheels in meters
+TIME_STEP = 64
 
-W = 1.15  # width of arena
-H = 1.95  # height of arena
+MAX_SPEED = 6.28
 
-robot_timestep = 0.1        # 1/robot_timestep equals update frequency of robot
-simulation_timestep = 0.01  # timestep in kinematics sim (probably don't touch..)
+#distance to the wall
+dist = 12
 
-# the world is a rectangular arena with width W and height H
-world = LinearRing([(W/2,H/2),(-W/2,H/2),(-W/2,-H/2),(W/2,-H/2)])
+# create the Robot instance.
+robot = Robot()
 
-# Variables 
-###########
+#See Thymio specific Webots names: https://cyberbotics.com/doc/guide/thymio2#thymio2-wbt
+#See "robot" specific functions: https://cyberbotics.com/doc/reference/robot?tab=python#getlightsensor
+#Motors
+leftMotor = robot.getMotor('motor.left')
+rightMotor = robot.getMotor('motor.right')
+leftMotor.setPosition(float('inf'))
+rightMotor.setPosition(float('inf'))
+leftMotor.setVelocity(0)
+rightMotor.setVelocity(0)
 
-x = 0.0   # robot position in meters - x direction
-y = 0.0   # robot position in meters - y direction
-q = 0.0   # robot heading with respect to x-axis in radians 
+#see functions of DistanceSensor: https://cyberbotics.com/doc/reference/distancesensor#wb_distance_sensor_enable
+#sensors
+sens2 = robot.getDistanceSensor("prox.horizontal.2")
+sens4 = robot.getDistanceSensor("prox.horizontal.4")
+#enable distance sensor measurements in sampling period of TIME_STEP
+sens2.enable(TIME_STEP)
+sens4.enable(TIME_STEP)
 
-left_wheel_velocity =  10/(2*pi)  # robot left wheel velocity in radians/s
-right_wheel_velocity =  10/(2*pi)  # robot right wheel velocity in radians/s
+class ThymioRobot:
+    def __init__(self, id, gender, startPos, sensor_front, sensor_right):
+        self.id = id
+        self.gender = gender
+        self.startPos = startPos
+        self.sensor_front = sensor_front
+        self.sensor_right = sensor_right
 
-# Kinematic model
-#################
-# updates robot position and heading based on velocity of wheels and the elapsed time
-# the equations are a forward kinematic model of a two-wheeled robot - don't worry just use it
-def simulationstep():
-    global x, y, q
+    # Choose random gender
+    ##############
+    # 0 = male = blue
+    # 1 = female = red
+    def generateGender(self):
+        random.randint(0, 1)
 
-    for step in range(int(robot_timestep/simulation_timestep)):     #step model time/timestep times
-        v_x = cos(q)*(R*left_wheel_velocity/2 + R*right_wheel_velocity/2) 
-        v_y = sin(q)*(R*left_wheel_velocity/2 + R*right_wheel_velocity/2)
-        omega = R*left_wheel_velocity/L - R*right_wheel_velocity/L    
+    def generateStartPosition(self):
+        random.random()
+
+p1 = ThymioRobot()
+p1.myfunc()
+
+#Wall following algorithm
+
+while robot.step(TIME_STEP) != -1:
+    #get the values read by the sensor
+    sens2_dist = sens2.getValue()
+    sens4_dist = sens4.getValue()
     
-        x += v_x * simulation_timestep
-        y += v_y * simulation_timestep
-        q += omega * simulation_timestep
+    
+    if sens4_dist > dist:
+       #Turn left
+       leftMotor.setVelocity(-dist*3.14159265359/4)
+       rightMotor.setVelocity(dist*3.14159265359/4)
+    
+    else: 
+       leftMotor.setVelocity(0.1 * MAX_SPEED)
+       rightMotor.setVelocity(0.1 * MAX_SPEED)
+       
+
+
 
 # Communication
 ##############
@@ -158,50 +183,3 @@ def faceArena(distance_sensor_right):
     while(distance_sensor_right > 0.15):
         left_wheel_velocity = L*pi/4
         right_wheel_velocity = -L*pi/4
-
-# Reading Sensor values
-#######################
-def distanceSensorFront():
-    global left_wheel_velocity, x, y
-    ray_sensor_front = LineString([(x, y), (x + cos(q) * 2 * W, y + sin(q) * 2 * H)])  
-    sensor_front = world.intersection(ray_sensor_front)
-    distance_sensor_front = sqrt(((sensor_front.x - x) ** 2 + (sensor_front.y - y) ** 2))
-    return distance_sensor_front
-
-def distanceSensorRight():
-    global right_wheel_velocity, x, y
-    ray_sensor_right = LineString([(x, y), (x + cos(q + (pi / 3)) * 2 * W, y + sin(q + (pi / 3)) * 2 * H)])  
-    sensor_right = world.intersection(ray_sensor_right)
-    distance_sensor_right = sqrt(((sensor_right.x - x) ** 2 + (sensor_right.y - y) ** 2))
-    return distance_sensor_right
-
-# Simulation loop
-#################
-file = open("./DanceParty/trajectory.dat", "w")
-fileSen = open("./DanceParty/sensor.dat", "w")
-for cnt in range(5000):
-    #Get distance to wall for both front and right sensor
-    distance_sensor_front = distanceSensorFront()
-    distance_sensor_right = distanceSensorRight()
-    
-    #benchWarmer(distance_sensor_front, distance_sensor_right)
-    #showColor()
-    #findDancePartner(cnt, distance_sensor_front)
-    #danceMoves()   
-    #step simulation
-    simulationstep()
-
-    #check collision with arena walls 
-    if (world.distance(Point(x,y))<L/2):
-        break
-        
-    if cnt%50==0:
-        file.write( str(x) + ", " + str(y) + ", " + str(cos(q)*0.05) + ", " + str(sin(q)*0.05) + "\n")
-        fileSen.write("Right sensor: " + str(distance_sensor_right) + ", " + "Front sensor: " + str(
-        distance_sensor_front) + ", " + "\n")
-
-file.close()
-fileSen.close()
-
-#asebamedulla "ser:name=Thymio-II"
-    
