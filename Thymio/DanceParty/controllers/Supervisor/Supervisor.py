@@ -31,24 +31,26 @@ class Driver (Supervisor):
         super(Driver, self).__init__()
         self.emitter = self.getEmitter('emitter')
         robot = self.getFromDef('ThymioII')
-        robot2 = self.getFromDef('ThymioII_2')
+        #robot2 = self.getFromDef('ThymioII_2')
         self.translationField = robot.getField('translation')
-        self.translationField2 = robot2.getField('translation')
-        self.keyboard.enable(Driver.timeStep)
-        self.keyboard = self.getKeyboard()
+        #self.translationField2 = robot2.getField('translation')
+        #self.keyboard.enable(Driver.timeStep)
+       
 
     def run(self):
         # Main loop.
+        message = 'hi'
         while True:
+            #self.emitter.send(message.encode('utf-8'))
             # Deal with the pressed keyboard key.
-            translationValues = self.translationField.getSFVec3f()
-            print('ROBOT1 is located at (' + str(translationValues[0]) + ',' + str(translationValues[2]) + ')')
-            translationValues2 = self.translationField2.getSFVec3f()
-            print('ROBOT12 is located at (' + str(translationValues2[0]) + ',' + str(translationValues2[2]) + ')')
-          # Perform a simulation step, quit the loop when
-           # Webots is about to quit.
+            #translationValues = self.translationField.getSFVec3f()
+            #print('ROBOT1 is located at (' + str(translationValues[0]) + ',' + str(translationValues[2]) + ')')
+            #translationValues2 = self.translationField2.getSFVec3f()
+            #print('ROBOT12 is located at (' + str(translationValues2[0]) + ',' + str(translationValues2[2]) + ')')
+            # Perform a simulation step, quit the loop when
+            # Webots is about to quit.
             if self.step(self.timeStep) == -1:
-             break
+                break
 
     def displayHelp(self):
         print(

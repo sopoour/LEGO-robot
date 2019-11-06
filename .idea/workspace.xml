@@ -2,37 +2,7 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="e1556b93-e64b-438a-9b76-c88de210dd70" name="Default Changelist" comment="">
-      <change afterPath="$PROJECT_DIR$/.idea/inspectionProfiles/Project_Default.xml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/Evolving/.idea/Evolving.iml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/Simulation/.idea/Simulation.iml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/Thymio/DanceParty/ThymioRobot.py" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/Thymio/DanceParty/dance-controller.py" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/Thymio/DanceParty/trajectory.dat" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/Thymio/FollowWall/simple_visualization.gnu" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/Thymio/FollowWall/trajectory.dat" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/Thymio/Q-Learning/simple_visualization.gnu" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/sensor.dat" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/LEGO Robot/hello.py" beforeDir="false" afterPath="$PROJECT_DIR$/LEGO Robot/simpleController.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Simulation/.idea/.gitignore" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Simulation/.idea/inspectionProfiles/profiles_settings.xml" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Simulation/Qsimpel.py" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Simulation/SimClass.py" beforeDir="false" afterPath="$PROJECT_DIR$/Thymio/Q-Learning/qlearning_followWall_simulation.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Simulation/Webots/controllers/q-controller/q-controller.py" beforeDir="false" afterPath="$PROJECT_DIR$/Thymio/FollowWall/Webots/controllers/q-controller/q-controller.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Simulation/Webots/controllers/wall_following/wall_following.py" beforeDir="false" afterPath="$PROJECT_DIR$/Thymio/FollowWall/Webots/controllers/wall_following/wall_following.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Simulation/Webots/worlds/.thymio_simulation.wbproj" beforeDir="false" afterPath="$PROJECT_DIR$/Thymio/FollowWall/Webots/worlds/.thymio_simulation.wbproj" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Simulation/Webots/worlds/thymio_simulation.wbt" beforeDir="false" afterPath="$PROJECT_DIR$/Thymio/FollowWall/Webots/worlds/thymio_simulation.wbt" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Simulation/follow_wall.aesl" beforeDir="false" afterPath="$PROJECT_DIR$/Thymio/FollowWall/follow_wall.aesl" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Simulation/qlearning.py" beforeDir="false" afterPath="$PROJECT_DIR$/Thymio/Q-Learning/qlearning_only.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Simulation/simple_kinematic_simulator.py" beforeDir="false" afterPath="$PROJECT_DIR$/Thymio/FollowWall/simple_kinematic_simulator.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Simulation/simple_visualization.gnu" beforeDir="false" afterPath="$PROJECT_DIR$/Thymio/DanceParty/simple_visualization.gnu" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Simulation/tests/followHand.aesl" beforeDir="false" afterPath="$PROJECT_DIR$/Thymio/FollowWall/tests/followHand.aesl" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Simulation/tests/following_wall-pre-code.aesl" beforeDir="false" afterPath="$PROJECT_DIR$/Thymio/FollowWall/tests/following_wall-pre-code.aesl" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Simulation/tests/qlearning_example.py" beforeDir="false" afterPath="$PROJECT_DIR$/Thymio/Q-Learning/test/qlearning_example.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Simulation/tests/sensorReadings.aesl" beforeDir="false" afterPath="$PROJECT_DIR$/Thymio/FollowWall/tests/sensorReadings.aesl" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Thymio/FollowWall/.idea/.gitignore" beforeDir="false" afterPath="$PROJECT_DIR$/Thymio/FollowWall/.idea/.gitignore" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Thymio/FollowWall/.idea/inspectionProfiles/profiles_settings.xml" beforeDir="false" afterPath="$PROJECT_DIR$/Thymio/FollowWall/.idea/inspectionProfiles/profiles_settings.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Thymio/FollowWall/SimClass.py" beforeDir="false" afterPath="$PROJECT_DIR$/Thymio/FollowWall/SimClass.py" afterDir="false" />
     </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="SHOW_DIALOG" value="false" />
@@ -89,7 +59,7 @@
       <updated>1570007280462</updated>
       <workItem from="1570007285164" duration="236000" />
       <workItem from="1572602058983" duration="2683000" />
-      <workItem from="1572616324005" duration="1956000" />
+      <workItem from="1572616324005" duration="3204000" />
     </task>
     <servers />
   </component>
