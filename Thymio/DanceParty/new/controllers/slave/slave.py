@@ -19,7 +19,7 @@ behavior.
 """
 
 from controller import Robot, Motor
-
+import random
 
 class Enumerate(object):
     def __init__(self, names):
@@ -36,6 +36,7 @@ class Slave (Robot):
     motors = []
     distanceSensors = []
     dist = 12
+    gender = random.randint(0,1)
 
     def boundSpeed(self, speed):
         return max(-self.maxSpeed, min(self.maxSpeed, speed))
@@ -61,6 +62,8 @@ class Slave (Robot):
         self.distanceSensors[2].enable(self.timeStep)
         self.distanceSensors[3].enable(self.timeStep)
         self.distanceSensors[4].enable(self.timeStep)
+        
+
 
     def run(self):
         while True:
@@ -70,22 +73,28 @@ class Slave (Robot):
             sens3_dist = self.distanceSensors[3].getValue()
             sens4_dist = self.distanceSensors[4].getValue()
             
-            self.motors[0].setVelocity(0.1)
-            self.motors[1].setVelocity(0.1)
+
+            #benchWarmer(sens0_dist, sens1_dist, sens2_dist, sens3_dist, sens4_dist)
             
-            if sens2_dist > self.dist and sens3_dist > self.dist or sens4_dist > self.dist:
-                # Turn left
-                self.motors[0].setVelocity(-self.dist * 3.14159265359 / 4)
-                self.motors[1].setVelocity(self.dist * 3.14159265359 / 4)
             
-            else:
-                self.motors[0].setVelocity(0.1 * self.maxSpeed)
-                self.motors[1].setVelocity(0.1 * self.maxSpeed)
             # Perform a simulation step, quit the loop when
             # Webots is about to quit.
             if self.step(self.timeStep) == -1:
                 break
-
-
+    # The robots randomly decide on a gender and change their color to reﬂect their gender 
+    # (blue, red) 1. The robot is shy at the moment and stays still along the wall. 
+    # It timidly awaits another robot to ask it to dance.
+    def benchWarmer(sens0_dist, sens1_dist, sens2_dist, sens3_dist, sens4_dist):
+        if sens2_dist > self.dist and sens3_dist > self.dist or sens4_dist > self.dist:
+            # Turn left
+            self.motors[0].setVelocity(-self.dist * 3.14159265359 / 4)
+            self.motors[1].setVelocity(self.dist * 3.14159265359 / 4)
+        
+        else:
+            self.motors[0].setVelocity(0.1 * self.maxSpeed)
+            self.motors[1].setVelocity(0.1 * self.maxSpeed)
+        
+        
+        
 controller = Slave()
 controller.run()

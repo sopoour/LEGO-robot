@@ -29,16 +29,8 @@ class Driver (Supervisor):
 
     def __init__(self):
         super(Driver, self).__init__()
-        self.emitter = self.getEmitter('emitter')
-        robot = self.getFromDef('ROBOT1')
-        #self.translationField = robot.getField('translation')
-        #self.keyboard.enable(Driver.timeStep)
-        #self.keyboard = self.getKeyboard()
 
     def run(self):
-        #self.displayHelp()
-        #previous_message = ''
-
         # Main loop.
         while True:
             # Perform a simulation step, quit the loop when
