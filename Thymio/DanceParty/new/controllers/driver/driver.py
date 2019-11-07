@@ -22,7 +22,7 @@ from controller import Supervisor
 
 
 class Driver (Supervisor):
-    timeStep = 64
+    timeStep = 128
     x = 0.1
     z = 0.3
     translation = [x, 0.0, z]
@@ -30,39 +30,21 @@ class Driver (Supervisor):
     def __init__(self):
         super(Driver, self).__init__()
         self.emitter = self.getEmitter('emitter')
-        robot = self.getFromDef('ThymioII')
-        #robot2 = self.getFromDef('ThymioII_2')
-        self.translationField = robot.getField('translation')
-        #self.translationField2 = robot2.getField('translation')
+        robot = self.getFromDef('ROBOT1')
+        #self.translationField = robot.getField('translation')
         #self.keyboard.enable(Driver.timeStep)
-       
+        #self.keyboard = self.getKeyboard()
 
     def run(self):
+        #self.displayHelp()
+        #previous_message = ''
+
         # Main loop.
-        message = 'hi'
         while True:
-            #self.emitter.send(message.encode('utf-8'))
-            # Deal with the pressed keyboard key.
-            #translationValues = self.translationField.getSFVec3f()
-            #print('ROBOT1 is located at (' + str(translationValues[0]) + ',' + str(translationValues[2]) + ')')
-            #translationValues2 = self.translationField2.getSFVec3f()
-            #print('ROBOT12 is located at (' + str(translationValues2[0]) + ',' + str(translationValues2[2]) + ')')
             # Perform a simulation step, quit the loop when
             # Webots is about to quit.
             if self.step(self.timeStep) == -1:
                 break
-
-    def displayHelp(self):
-        print(
-            'Commands:\n'
-            ' I for displaying the commands\n'
-            ' A for avoid obstacles\n'
-            ' F for move forward\n'
-            ' S for stop\n'
-            ' T for turn\n'
-            ' R for positioning ROBOT1 at (0.1,0.3)\n'
-            ' G for knowing the (x,z) position of ROBOT1'
-        )
 
 
 controller = Driver()
