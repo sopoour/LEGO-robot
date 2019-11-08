@@ -89,9 +89,9 @@ class Slave (Robot):
         print("finding partner")
         start = time.time()
         end = time.time()
-        self.weight = random.randint(1,1)
+        self.weight = random.randint(1,5)
         print("weight: ",self.weight)
-        if self.weight == 1:
+        if self.weight == 3:
             print("I'm a 4")
             while end-start < 5:
                 self.motors[0].setVelocity(0.1 * self.maxSpeed)
@@ -145,7 +145,7 @@ class Slave (Robot):
             #elif(self.state == 2):
                 #print("I'm here")
                 #self.faceArena(sens2_dist, sens3_dist, sens4_dist)
-            print("state: ", self.state)
+           # print("state: ", self.state)
 
 
             if self.step(self.timeStep) == -1:

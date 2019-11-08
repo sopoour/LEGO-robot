@@ -29,12 +29,17 @@ class Driver (Supervisor):
 
     def __init__(self):
         super(Driver, self).__init__()
-
+        self.emitter = self.getEmitter('emitter')
+        robot = self.getFromDef('ThymioII_1')
+        self.translationField = robot.getField('translation')
+        
     def run(self):
         # Main loop.
         while True:
             # Perform a simulation step, quit the loop when
             # Webots is about to quit.
+            translationValues = self.translationField.getSFVec3f()
+            print('ROBOT1 is located at (' + str(translationValues[0]) + ',' + str(translationValues[2]) + ')')
             if self.step(self.timeStep) == -1:
                 break
 
