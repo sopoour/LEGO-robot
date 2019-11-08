@@ -19,7 +19,7 @@ behavior.
 """
 
 from controller import Robot, Motor
-import random
+import random, time
 
 class Enumerate(object):
     def __init__(self, names):
@@ -36,7 +36,9 @@ class Slave (Robot):
     motors = []
     distanceSensors = []
     dist = 12
-    gender = random.randint(0,1)
+    gender = -1
+    isSingle = True
+    state = 0 
 
     def boundSpeed(self, speed):
         return max(-self.maxSpeed, min(self.maxSpeed, speed))
@@ -63,8 +65,36 @@ class Slave (Robot):
         self.distanceSensors[3].enable(self.timeStep)
         self.distanceSensors[4].enable(self.timeStep)
         
+    #  and change their color to reﬂect their gender 
+    # (blue, red) 1. The robot is shy at the moment and stays still along the wall. 
+    # It timidly awaits another robot to ask it to dance.
+    def benchWarmer(self, sens2_dist, sens3_dist, sens4_dist):
+        #The robots randomly decide on a gender
+        self.gender = random.randint(0,1)
+        if(self.gender == 0):
+            #self.leds.top
+            print("zero", self.gender)
+        else:
+            #self.leds.top = 'green'
+            print("one", self.gender)
 
 
+    def returnToWall(self, sens2_dist, sens3_dist, sens4_dist):
+        if sens2_dist > self.dist and sens3_dist > self.dist or sens4_dist > self.dist:
+            self.state = 1
+
+        else:
+            self.motors[0].setVelocity(0.1 * self.maxSpeed)
+            self.motors[1].setVelocity(0.1 * self.maxSpeed)
+       
+    def faceArena(self, sens2_dist, sens3_dist, sens4_dist):
+        if sens2_dist < self.dist:
+            self.state = 2
+        else:
+            # Todo: turn left 180
+            self.motors[0].setVelocity(-self.dist * 3.14159265359 / 4)
+            self.motors[1].setVelocity(self.dist * 3.14159265359 / 4)
+            
     def run(self):
         while True:
             sens0_dist = self.distanceSensors[0].getValue()
@@ -73,26 +103,19 @@ class Slave (Robot):
             sens3_dist = self.distanceSensors[3].getValue()
             sens4_dist = self.distanceSensors[4].getValue()
             
+            if(self.state == 0):
+                #self.benchWarmer(sens2_dist, sens3_dist, sens4_dist)
+                self.returnToWall(sens2_dist, sens3_dist, sens4_dist)
+            elif(self.state == 1):
+                self.faceArena(sens2_dist, sens3_dist, sens4_dist)
+            elif(self.state == 2):
+                print("I'm here")
+                #self.faceArena(sens2_dist, sens3_dist, sens4_dist)
+            
 
-            #benchWarmer(sens0_dist, sens1_dist, sens2_dist, sens3_dist, sens4_dist)
-            
-            
-            # Perform a simulation step, quit the loop when
-            # Webots is about to quit.
+
             if self.step(self.timeStep) == -1:
                 break
-    # The robots randomly decide on a gender and change their color to reﬂect their gender 
-    # (blue, red) 1. The robot is shy at the moment and stays still along the wall. 
-    # It timidly awaits another robot to ask it to dance.
-    def benchWarmer(sens0_dist, sens1_dist, sens2_dist, sens3_dist, sens4_dist):
-        if sens2_dist > self.dist and sens3_dist > self.dist or sens4_dist > self.dist:
-            # Turn left
-            self.motors[0].setVelocity(-self.dist * 3.14159265359 / 4)
-            self.motors[1].setVelocity(self.dist * 3.14159265359 / 4)
-        
-        else:
-            self.motors[0].setVelocity(0.1 * self.maxSpeed)
-            self.motors[1].setVelocity(0.1 * self.maxSpeed)
         
         
         
