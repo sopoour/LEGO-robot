@@ -34,8 +34,7 @@ var dist_pi = 0
 var two_pi = 0
 
 #Variables
-var gender_send
-var gender_recieve 
+var gender
 var state
 
 #timer
@@ -57,13 +56,13 @@ call math.div(dist_pi, dist, 3)
 #Benchwarmer
 #only start when clicking on the center button
 onevent button.center
-	call math.rand(gender_send)
-	if  gender_send &lt; 0 then
-		gender_send = 1 #female
+	call math.rand(gender)
+	if  gender &lt; 0 then
+		gender = 1 #female
 		#colour = red
 		call leds.top(32,0,0)
 	else
-		gender_send = 2 #male
+		gender = 2 #male
 		#colour = blue
 		call leds.top(0,0,32)
 	end
@@ -113,20 +112,13 @@ onevent prox.comm
 	if  state == 2 then
 		#tx robot = benchwarmer who sends its gender
 		prox.comm.tx = gender_send
-		state = 2
+		state = 3
 		return
 	end
 	
 	if  state == 3 then
-		#rx robot = find-dance-partner robot chooses only now a gender (to be able to compare whether genders match
-		call math.rand(gender_recieve)
-		if  gender_recieve &lt; 0 then
-			gender_recieve = 1 #female
-		else
-			gender_recieve = 2 #male
-		end
 		#If gender is not the same
-		if  prox.comm.rx == gender_recieve then
+		if  prox.comm.rx != gender then
 			#change colour to purple
 			call leds.top(32, 0, 32)
 			#ADD: tx robot has to move towards center with rx robot

@@ -18,7 +18,7 @@ According to the messages it receives, the robot change its
 behavior.
 """
 
-from controller import Robot, Motor
+from controller import Robot, Motor, LED
 import random, time
 
 class Enumerate(object):
@@ -35,10 +35,12 @@ class Slave (Robot):
     mode = Mode.AVOIDOBSTACLES
     motors = []
     distanceSensors = []
+    led = 0
     dist = 12
     gender = -1
     isSingle = True
     state = 0 
+    weight = -1
 
     def boundSpeed(self, speed):
         return max(-self.maxSpeed, min(self.maxSpeed, speed))
@@ -64,24 +66,55 @@ class Slave (Robot):
         self.distanceSensors[2].enable(self.timeStep)
         self.distanceSensors[3].enable(self.timeStep)
         self.distanceSensors[4].enable(self.timeStep)
+        #self.LED.getLED("leds.top")
         
     #  and change their color to reﬂect their gender 
     # (blue, red) 1. The robot is shy at the moment and stays still along the wall. 
     # It timidly awaits another robot to ask it to dance.
     def benchWarmer(self, sens2_dist, sens3_dist, sens4_dist):
         #The robots randomly decide on a gender
-        self.gender = random.randint(0,1)
-        if(self.gender == 0):
-            #self.leds.top
-            print("zero", self.gender)
+        self.gender = random.randint(1,2)
+        if(self.gender == 1):
+            #self.LED.set(self, R0G0B32)
+            print("male", self.gender)
         else:
-            #self.leds.top = 'green'
-            print("one", self.gender)
-
-
+            #self.LED.set(self, R32G0B0)
+            print("female", self.gender)
+        
+        self.state = 1
+        
+        #Missing: prox.comm.enable & timer=100ms
+    
+    def findDancePartner (self, sens2_dist, sens3_dist, sens4_dist):
+        print("finding partner")
+        start = time.time()
+        end = time.time()
+        self.weight = random.randint(1,1)
+        print("weight: ",self.weight)
+        if self.weight == 1:
+            print("I'm a 4")
+            while end-start < 5:
+                self.motors[0].setVelocity(0.1 * self.maxSpeed)
+                self.motors[1].setVelocity(0.1 * self.maxSpeed)
+                end = time.time()
+                print("I went straight")
+            while end-start < 30: #see how long it takes to go full circle
+                #Wall following     
+                if sens2_dist > self.dist and sens3_dist > self.dist or sens4_dist > self.dist:
+                    self.motors[0].setVelocity(-self.dist * 3.14159265359 / 4)
+                    self.motors[1].setVelocity(self.dist * 3.14159265359 / 4)
+        
+                else:
+                    self.motors[0].setVelocity(0.1 * self.maxSpeed)
+                    self.motors[1].setVelocity(0.1 * self.maxSpeed)
+                end = time.time()
+                print("I follow the wall")
+        self.state = 2    
+        
+    
     def returnToWall(self, sens2_dist, sens3_dist, sens4_dist):
         if sens2_dist > self.dist and sens3_dist > self.dist or sens4_dist > self.dist:
-            self.state = 1
+            self.state = 7
 
         else:
             self.motors[0].setVelocity(0.1 * self.maxSpeed)
@@ -89,7 +122,7 @@ class Slave (Robot):
        
     def faceArena(self, sens2_dist, sens3_dist, sens4_dist):
         if sens2_dist < self.dist:
-            self.state = 2
+            self.state = 8
         else:
             # Todo: turn left 180
             self.motors[0].setVelocity(-self.dist * 3.14159265359 / 4)
@@ -104,14 +137,15 @@ class Slave (Robot):
             sens4_dist = self.distanceSensors[4].getValue()
             
             if(self.state == 0):
-                #self.benchWarmer(sens2_dist, sens3_dist, sens4_dist)
-                self.returnToWall(sens2_dist, sens3_dist, sens4_dist)
+                self.benchWarmer(sens2_dist, sens3_dist, sens4_dist)
+                #self.returnToWall(sens2_dist, sens3_dist, sens4_dist)
             elif(self.state == 1):
-                self.faceArena(sens2_dist, sens3_dist, sens4_dist)
-            elif(self.state == 2):
-                print("I'm here")
+                self.findDancePartner(sens2_dist, sens3_dist, sens4_dist)
                 #self.faceArena(sens2_dist, sens3_dist, sens4_dist)
-            
+            #elif(self.state == 2):
+                #print("I'm here")
+                #self.faceArena(sens2_dist, sens3_dist, sens4_dist)
+            print("state: ", self.state)
 
 
             if self.step(self.timeStep) == -1:
