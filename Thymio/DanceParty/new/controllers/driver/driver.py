@@ -26,23 +26,42 @@ class Driver (Supervisor):
     x = 0.1
     z = 0.3
     translation = [x, 0.0, z]
-
+    translationField = []
+    message = ''
+    previous_message = ''
+   
     def __init__(self):
         super(Driver, self).__init__()
         self.emitter = self.getEmitter('emitter')
-        robot = self.getFromDef('ThymioII_1')
-        self.translationField = robot.getField('translation')
+        #self.emitter.setChannel(1)
+        self.translationField.append(self.getFromDef('ThymioII_1').getField('translation'))
+        self.translationField.append(self.getFromDef('ThymioII_2').getField('translation'))
+        self.translationField.append(self.getFromDef('ThymioII_3').getField('translation'))
         
     def run(self):
         # Main loop.
+        # Lets the robot know that it is close to another robot 
         while True:
             # Perform a simulation step, quit the loop when
             # Webots is about to quit.
-            translationValues = self.translationField.getSFVec3f()
-            print('ROBOT1 is located at (' + str(translationValues[0]) + ',' + str(translationValues[2]) + ')')
+            self.message = 'drives' 
+            translationValues1 = self.translationField[0].getSFVec3f()
+            translationValues2 = self.translationField[1].getSFVec3f()
+            translationValues3 = self.translationField[2].getSFVec3f()
+
+            print('ROBOT1 is located at (' + str(translationValues1[0]) + ',' + str(translationValues1[2]) + ')')
+            print('ROBOT2 is located at (' + str(translationValues2[0]) + ',' + str(translationValues2[2]) + ')')
+            print('ROBOT3 is located at (' + str(translationValues3[0]) + ',' + str(translationValues3[2]) + ')')
+            
+            # Send a new message through the emitter device.
+            if self.message != '' and self.message != self.previous_message:
+                self.previous_message = self.message
+                print('Driver, ' + self.message)
+                self.emitter.send(self.message.encode('utf-8'))
+            
             if self.step(self.timeStep) == -1:
                 break
-
+            
 
 controller = Driver()
 controller.run()
