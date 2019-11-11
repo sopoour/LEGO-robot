@@ -1,0 +1,253 @@
+<!DOCTYPE aesl-source>
+<network>
+
+
+<!--list of global events-->
+
+
+<!--list of constants-->
+<constant value="800" name="threshold_min"/>
+<constant value="1500" name="threshold_max"/>
+<constant value="3500" name="threshold_close"/>
+
+
+<!--show keywords state-->
+<keywords flag="true"/>
+
+
+<!--node thymio-II-->
+<node nodeId="22471" name="thymio-II">var velocity = 0
+#distance to the wall
+#basis of (dist * pi)
+var dist_pi = 0
+#basis of (2 * pi)
+var two_pi = 0
+
+var gender
+var state
+var comm_count = 0
+var other_gen
+var counter = 0
+var random
+var move_count = 0
+
+	
+sub stop 
+	motor.left.target =  0
+	motor.right.target = 0
+	
+sub random_gender
+	call math.rand(gender)
+
+sub random_nr
+	call math.rand(random)
+
+sub velocity_calc
+	#multiply 2 and pi=3
+	call math.mul(two_pi, 2,3)
+	#devide 10 by two_pi
+	call math.div(velocity, 10, two_pi)
+	#devide dist by pi=3
+	call math.div(dist_pi, threshold_max, 3)
+	call math.div(velocity, dist_pi, 4)
+
+sub turn_right
+	callsub velocity_calc
+	motor.left.target =  velocity
+	motor.right.target = -velocity
+
+sub turn_right_soft
+	motor.left.target =  200
+	motor.right.target = -50
+	
+sub turn_left
+	callsub velocity_calc
+	motor.left.target =  -velocity
+	motor.right.target =  velocity
+	
+sub turn_left_soft
+	motor.left.target =  -50
+	motor.right.target = 200
+
+sub go_straight
+	motor.left.target = 300
+	motor.right.target = 300
+
+sub go_backwards
+	motor.left.target = -200
+	motor.right.target = -200
+
+#ADD: Timer/Counter, after a while of following wall and not finding anyone it should go back to a postion (callsub back_to_position)
+sub look_for_partner
+	state = 2
+	#CHANGE: Too sensitive on the right!
+	if prox.horizontal[4] > threshold_min  # far on the right
+		and prox.horizontal[4] &lt; threshold_max # not too far from wall on right
+   	and prox.horizontal[2] &lt; threshold_min # no object ahead
+	then
+		 callsub go_straight
+	elseif prox.horizontal[4] > threshold_min  # close on the right
+		and prox.horizontal[2] &lt; threshold_min  # no object ahead
+	then
+		callsub turn_left
+	elseif prox.horizontal[3] &lt; threshold_min  # far on the left
+		and prox.horizontal[2] &lt; threshold_min  # no object ahead
+	then
+		callsub turn_right_soft
+	elseif prox.horizontal[4] > threshold_min # close on the left
+		and prox.horizontal[2] > threshold_min # object ahead
+	then
+		callsub turn_left
+	elseif prox.horizontal[2] > threshold_min # object ahead
+		or prox.horizontal[3] > threshold_min # object ahead
+	then
+		callsub turn_left
+	elseif prox.horizontal[0] &lt; threshold_min # far on the left
+		and prox.horizontal[4] > threshold_min # close on the right
+		and prox.horizontal[2] > threshold_min # object ahead
+	then
+		callsub turn_left
+	else
+		callsub go_straight	
+	end
+
+#ADD: Timer/Counter, after a while not finding anyone to pair it should go back to a postion (callsub back_to_position)
+sub send_ack
+	if prox.comm.rx != gender then
+		callsub stop
+		call sound.system(5)
+		state = 3 #Pairing
+		comm_count += 1
+		if comm_count >= 5 then
+			state = 4 #Match
+			call leds.top(32,0,32)	
+			prox.comm.tx = 3
+			comm_count = 0
+			#pairing-message = 3
+		end
+	end
+
+#TEST: if this works on the benchwarmer robot (the receiving RX robot)
+sub receive_ack
+	if prox.comm.rx == 3 and state == 1 then
+		state = 4 #Match
+		call leds.top(32,0,32)	
+	end
+
+sub dance
+	#CHANGE: Dance move
+	#if prox.horizontal[2] > threshold_close then
+		counter += 1
+		#dance for 15sec
+		if  counter >=150 then
+			state = 6		
+		elseif counter %2 == 0 then
+				callsub turn_left
+				call leds.top(32,32,0)
+		else 
+			callsub turn_right
+			call leds.top(0,32,32)
+		end
+
+sub move_to_center 
+	#CHANGE: better movement to center (callibrate the sensors)
+	callsub turn_left
+	if prox.horizontal[6] > threshold_max or prox.horizontal[6] &lt; threshold_min and prox.horizontal[5] > threshold_max or prox.horizontal[5] &lt; threshold_min or prox.horizontal[2] &lt; threshold_max then
+		callsub go_straight
+	end
+	move_count += 1
+	if move_count >= 50 then
+		state = 5 
+		call prox.comm.enable(0)
+		move_count = 0
+	end
+
+sub back_to_position
+	callsub go_backwards
+	call leds.top(32,32,32)
+	call leds.circle (0,0,0,0,0,0,0,0)
+	#When too close stop
+	if  prox.horizontal[5] > threshold_close and prox.horizontal[6] > threshold_close then
+		callsub stop
+		state = 7
+	#go slower when closer to the wall
+	elseif  prox.horizontal[5] > threshold_max or prox.horizontal[6] > threshold_max then
+		motor.left.target = -100
+		motor.right.target = -100
+	elseif prox.horizontal[5] > prox.horizontal[6] or prox.horizontal[6] > threshold_max then
+		#correct right wheel backwards
+		callsub velocity_calc
+		motor.left.target = 0
+		motor.right.target = -velocity		
+	elseif prox.horizontal[6] > prox.horizontal[5] or prox.horizontal[5] > threshold_max then
+		#correct left wheel backwards
+		callsub velocity_calc
+		motor.left.target = -velocity
+		motor.right.target = 0	
+	end
+
+sub choose_gender
+	if gender == 1 then
+		gender = 1 #female
+		#colour = red
+		call leds.top(32,0,0)
+		prox.comm.tx = 1
+		state = 1
+	else
+		gender = 2 #male
+		#colour = blue
+		call leds.top(0,0,32)
+		prox.comm.tx = 2
+		state = 1
+	end
+	
+onevent button.center
+	call prox.comm.enable(1)
+	callsub random_gender
+	#timer.period[0] = abs(gender)
+	if gender &lt; 0 then
+		gender = 1 #female
+		#colour = red
+		call leds.top(32,0,0)
+		prox.comm.tx = 1
+		state = 1
+	else
+		gender = 2 #male
+		#colour = blue
+		call leds.top(0,0,32)
+		prox.comm.tx = 2
+		state = 1
+	end
+	
+onevent prox
+	callsub random_nr
+	#Random start
+	#TEST: Lower range of random
+	if  random > -1000 and random &lt; 0 or state == 2 then
+		if  state == 1 or state == 2 then
+			callsub look_for_partner
+		end
+	 elseif state == 4 then
+		callsub move_to_center
+		call leds.circle(32,32,32,32,32,32,32,32)
+	elseif  state == 5 then
+		callsub dance
+	elseif state == 6 then
+		callsub back_to_position
+	elseif  state == 7 then
+		callsub choose_gender
+	end
+	
+onevent prox.comm
+	#if state = find-dance-partner or ready for pairing
+	if  state == 2 or state == 3 then
+		#tx robot = benchwarmer who sends its gender
+		callsub send_ack
+	#if state = benchwarmer
+	elseif state == 1 then
+		#be ready to receive
+		callsub receive_ack
+	end</node>
+
+
+</network>

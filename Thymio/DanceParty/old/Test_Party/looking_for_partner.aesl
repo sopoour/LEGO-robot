@@ -1,0 +1,201 @@
+<!DOCTYPE aesl-source>
+<network>
+
+
+<!--list of global events-->
+
+
+<!--list of constants-->
+<constant value="500" name="threshhold_min"/>
+<constant value="1000" name="threshhold_max"/>
+
+
+<!--show keywords state-->
+<keywords flag="true"/>
+
+
+<!--node thymio-II-->
+<node nodeId="22471" name="thymio-II">var random_value
+var emit_values = [1]
+var ack_count = 0
+var other_gen
+var state = 0
+var received_val
+# 0 = bench warmer
+# 1  = looking for partner
+# 2 = 
+# 3 = sending ack
+# 4 = dancing
+# 5 = back to position
+
+var gender
+
+# reset outputs
+call sound.system(-1)
+call leds.top(0,0,0)
+call leds.bottom.left(0,0,0)
+call leds.bottom.right(0,0,0)
+call leds.circle(0,0,0,0,0,0,0,0)
+
+sub gen_random_nr 
+	call math.rand(random_value)
+
+sub stop
+	call leds.circle(32,32,32,32,32,32,32,32)
+	motor.left.target = 0
+	motor.right.target = 0
+
+sub go_straight
+	call leds.circle(32,0,0,0,0,0,0,0)
+	motor.left.target = 200
+   motor.right.target = 200
+
+sub turn_left_soft
+	call leds.circle(0,0,0,0,0,0,0,32)
+	motor.left.target = 150
+   motor.right.target = 200
+
+sub turn_left_hard
+	call leds.circle(0,0,0,0,0,0,32,0)
+	motor.left.target = 0
+   motor.right.target = 200
+
+sub turn_right_soft
+	call leds.circle(0,32,0,0,0,0,0,0)
+	motor.left.target = 200
+   motor.right.target = 150
+
+sub turn_right_hard
+	call leds.circle(0,0,32,0,0,0,0,0)
+	motor.left.target = 200
+   motor.right.target = 0
+
+sub look_for_partner
+	state = 1
+	if prox.horizontal[0] > threshhold_min  # close on the left
+		and prox.horizontal[0] &lt; threshhold_max # not to far from wall on left
+   	and prox.horizontal[2] &lt; threshhold_min # no object ahead
+	then
+		 callsub go_straight
+	elseif prox.horizontal[0] > threshhold_min  # close on the left
+		and prox.horizontal[2] &lt; threshhold_min  # no object ahead
+	then
+		callsub turn_right_soft
+	elseif prox.horizontal[0] &lt; threshhold_min  # far on the left
+		and prox.horizontal[2] &lt; threshhold_min  # no object ahead
+	then
+		callsub turn_left_soft
+	elseif prox.horizontal[0] > threshhold_min # close on the left
+		and prox.horizontal[2] > threshhold_min # object ahead
+	then
+		callsub turn_right_hard
+	elseif prox.horizontal[0] &lt; threshhold_min # far on the left
+		and prox.horizontal[4] > threshhold_min # close on the right
+		and prox.horizontal[2] > threshhold_min # object ahead
+	then
+		callsub turn_left_hard
+	else
+		callsub go_straight
+	end
+
+sub dance
+	if prox.horizontal[0] >= threshhold_min 
+	  and prox.horizontal[2] &lt; threshhold_min 
+	  and prox.horizontal[0] &lt;= threshhold_max
+	then
+		 callsub go_straight
+				
+	elseif prox.horizontal[0] > threshhold_min 
+		and prox.horizontal[2] &lt; threshhold_min 
+	then
+		callsub turn_right_soft
+		  
+	elseif prox.horizontal[0] &lt; threshhold_min 
+		and prox.horizontal[2] &lt; threshhold_min 
+	then
+		callsub turn_left_soft
+	elseif prox.horizontal[0] > threshhold_min 
+		and prox.horizontal[2] > threshhold_min 
+	then
+		callsub turn_right_hard
+	elseif prox.horizontal[0] &lt; threshhold_min 
+		and prox.horizontal[2] > threshhold_min 
+	then
+		callsub turn_left_hard
+	end
+
+sub try_send_ack
+	other_gen = prox.comm.rx
+	if other_gen == 1 and gender == 1 then
+		other_gen = 2
+	elseif other_gen == 2 and gender == 2 then
+		other_gen = 1
+	end
+	if other_gen != gender then
+		callsub stop
+		state = 3 #send ACK
+		prox.comm.tx = 3 #ACK
+		ack_count = ack_count +1
+		if ack_count >= 5 then
+			state = 4
+			call leds.top(0,32,0)	
+			ack_count = 0
+		end
+	end
+	
+sub receive_ack
+	received_val = prox.comm.rx
+	if received_val == 3 and state == 0 then
+		state = 4
+		call leds.top(0,32,0)	
+	end
+	
+onevent button.center
+	call prox.comm.enable(1) 
+	state = 1
+	callsub gen_random_nr
+	timer.period[0] = abs(random_value)
+	if random_value &lt; 0 then
+		call leds.top(0,0,32)
+		call leds.bottom.left(0,0,32)
+		call leds.bottom.right(0,0,32)
+		call leds.prox.h(0,0,0,0,0,0,0,0)
+		gender = 1
+		prox.comm.tx = 1
+	elseif random_value > 0 then
+		call leds.top(32,0,0)
+		call leds.bottom.left(32,0,0)
+		call leds.bottom.right(32,0,0)
+		call leds.prox.h(32,32,32,32,32,32,32,32)
+		gender = 2
+		prox.comm.tx = 2
+
+	end
+		
+onevent prox
+	if state == 1 then # state == looking for partner
+		  callsub look_for_partner
+	elseif state == 4 then # State = dance
+		  callsub dance
+	end
+
+#onevent timer0
+#	if state == 0 then # state == bench warmer
+#		state = 1
+#		callsub look_for_partner
+#	elseif state == 4 then
+#		state = 5 # State = back to position
+		# callsub back_to_position
+#	end
+	
+onevent prox.comm
+	if state == 1 or state == 3 then
+		callsub try_send_ack
+	elseif  state == 0 then
+		callsub receive_ack
+	elseif state == 4 then
+		# callsub dance
+	end</node>
+
+
+</network>

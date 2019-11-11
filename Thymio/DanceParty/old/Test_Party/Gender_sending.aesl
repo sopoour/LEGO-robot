@@ -1,0 +1,39 @@
+<!DOCTYPE aesl-source>
+<network>
+
+
+<!--list of global events-->
+
+
+<!--list of constants-->
+
+
+<!--show keywords state-->
+<keywords flag="true"/>
+
+
+<!--node thymio-II-->
+<node nodeId="1" name="thymio-II">var random_value
+var gender
+
+sub random_gender
+	call math.rand(gender)
+
+onevent button.center
+	call prox.comm.enable(1)
+	callsub random_gender
+	#timer.period[0] = abs(gender)
+	if  gender &lt; 0 then
+		gender = 1 #female
+		#colour = red
+		call leds.top(32,0,0)
+		prox.comm.tx = 1
+	else
+		gender = 2 #male
+		#colour = blue
+		call leds.top(0,0,32)
+		prox.comm.tx = 2
+	end</node>
+
+
+</network>
