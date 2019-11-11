@@ -16,7 +16,16 @@
 
 
 <!--node thymio-II-->
-<node nodeId="22471" name="thymio-II">var velocity = 0
+<node nodeId="22471" name="thymio-II">
+#1 = Benchwarmer
+#2 = Find-dance-partner (randomly move out, follow wall)
+#3 = Pairing
+#4 = Match
+#5 = Move-to-center
+#6 = Dance
+#7 = Return-to-bench
+
+var velocity = 0
 #distance to the wall
 #basis of (dist * pi)
 var dist_pi = 0
