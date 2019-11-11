@@ -41,8 +41,7 @@ alpha = 0.9  # learning rate
 reward = np.array([
     [-500, -100, 0],
     [-500, 0, 100],
-    [-500, 0, 0],
-])
+    [-500, 0, 0],])
 
 # Initializing Q-values & state
 Q = np.array(np.zeros([3, 3]))
