@@ -2,8 +2,12 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="45efe5f5-368c-445a-9a29-11845a094f2a" name="Default Changelist" comment="">
-      <change beforePath="$PROJECT_DIR$/../.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/../.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Qsimpel.py" beforeDir="false" afterPath="$PROJECT_DIR$/Qsimpel.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../Thymio/DanceParty/new/controllers/driver/driver.py" beforeDir="false" afterPath="$PROJECT_DIR$/../Thymio/DanceParty/new/controllers/driver/driver.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../Thymio/DanceParty/new/controllers/slave/slave.py" beforeDir="false" afterPath="$PROJECT_DIR$/../Thymio/DanceParty/new/controllers/slave/slave.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../Thymio/DanceParty/new/worlds/.example.wbproj" beforeDir="false" afterPath="$PROJECT_DIR$/../Thymio/DanceParty/new/worlds/.example.wbproj" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../Thymio/DanceParty/new/worlds/example.wbt" beforeDir="false" afterPath="$PROJECT_DIR$/../Thymio/DanceParty/new/worlds/example.wbt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../Thymio/Q-Learning/qlearning_followWall_simulation.py" beforeDir="false" afterPath="$PROJECT_DIR$/../Thymio/Q-Learning/qlearning_followWall_simulation.py" afterDir="false" />
     </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="SHOW_DIALOG" value="false" />
@@ -52,7 +56,7 @@
       </list>
     </option>
   </component>
-  <component name="RunManager" selected="Python.evl">
+  <component name="RunManager" selected="Python.pri_q_l">
     <configuration name="QAgent" type="PythonConfigurationType" factoryName="Python" nameIsGenerated="true">
       <module name="Simulation" />
       <option name="INTERPRETER_OPTIONS" value="" />
@@ -164,6 +168,7 @@
       <workItem from="1572455350769" duration="1000" />
       <workItem from="1572455376228" duration="1247000" />
       <workItem from="1572513993335" duration="597000" />
+      <workItem from="1573481252000" duration="1399000" />
     </task>
     <servers />
   </component>
@@ -197,7 +202,7 @@
   <component name="com.intellij.coverage.CoverageDataManagerImpl">
     <SUITE FILE_PATH="coverage/Simulation$QAgent.coverage" NAME="QAgent Coverage Results" MODIFIED="1572368786588" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
     <SUITE FILE_PATH="coverage/Simulation$SimClass.coverage" NAME="SimClass Coverage Results" MODIFIED="1572417542968" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
-    <SUITE FILE_PATH="coverage/Simulation$pri_q_l.coverage" NAME="pri_q_l Coverage Results" MODIFIED="1572374051334" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
+    <SUITE FILE_PATH="coverage/Simulation$pri_q_l.coverage" NAME="pri_q_l Coverage Results" MODIFIED="1573481351162" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
     <SUITE FILE_PATH="coverage/Simulation$evl.coverage" NAME="evl Coverage Results" MODIFIED="1572426529976" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
   </component>
 </project>
