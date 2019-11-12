@@ -9,6 +9,7 @@
 <constant value="800" name="threshold_min"/>
 <constant value="1500" name="threshold_max"/>
 <constant value="3500" name="threshold_close"/>
+<constant value="4100" name="threshold_wall"/>
 
 
 <!--show keywords state-->
@@ -37,10 +38,12 @@ var state
 var comm_count = 0
 var other_gen
 var counter = 0
+var turnRightCounter = 0
 var random
 var move_count = 0
+var backCounter = 0
+var findANewSpot = 0
 
-	
 sub stop 
 	motor.left.target =  0
 	motor.right.target = 0
@@ -89,6 +92,7 @@ sub go_backwards
 #ADD: Timer/Counter, after a while of following wall and not finding anyone it should go back to a postion (callsub back_to_position)
 sub look_for_partner
 	state = 2
+	turnRightCounter += 1
 	#CHANGE: Too sensitive on the right!
 	if prox.horizontal[4] > threshold_min  # far on the right
 		and prox.horizontal[4] &lt; threshold_max # not too far from wall on right
@@ -101,6 +105,7 @@ sub look_for_partner
 		callsub turn_left
 	elseif prox.horizontal[3] &lt; threshold_min  # far on the left
 		and prox.horizontal[2] &lt; threshold_min  # no object ahead
+		and turnRightCounter % 3 == 0 
 	then
 		callsub turn_right_soft
 	elseif prox.horizontal[4] > threshold_min # close on the left
@@ -159,24 +164,38 @@ sub dance
 		end
 
 sub move_to_center 
-	#CHANGE: better movement to center (callibrate the sensors)
-	callsub turn_left
-	if prox.horizontal[6] > threshold_max or prox.horizontal[6] &lt; threshold_min and prox.horizontal[5] > threshold_max or prox.horizontal[5] &lt; threshold_min or prox.horizontal[2] &lt; threshold_max then
+	if move_count &lt; 20 then
+		callsub turn_left
+	elseif move_count &lt; 50 then
 		callsub go_straight
-	end
-	move_count += 1
-	if move_count >= 50 then
+	else
 		state = 5 
 		call prox.comm.enable(0)
 		move_count = 0
 	end
+	move_count += 1
 
 sub back_to_position
 	callsub go_backwards
 	call leds.top(32,32,32)
 	call leds.circle (0,0,0,0,0,0,0,0)
+	
+	if backCounter > 150 then
+		if findANewSpot &lt; 10 then
+			callsub go_straight
+		elseif findANewSpot &lt; 20 then
+			callsub turn_right
+		elseif findANewSpot &lt; 50 then
+			callsub go_straight
+		elseif findANewSpot &lt; 60 then
+			callsub turn_left	
+		else
+			backCounter = 0
+			findANewSpot = 0
+		end	
+		findANewSpot += 1
 	#When too close stop
-	if  prox.horizontal[5] > threshold_close and prox.horizontal[6] > threshold_close then
+	elseif  prox.horizontal[5] > threshold_wall and prox.horizontal[6] > threshold_wall then
 		callsub stop
 		state = 7
 	#go slower when closer to the wall
@@ -194,6 +213,7 @@ sub back_to_position
 		motor.left.target = -velocity
 		motor.right.target = 0	
 	end
+	backCounter += 1
 
 sub choose_gender
 	if gender == 1 then
@@ -237,6 +257,7 @@ onevent prox
 			callsub look_for_partner
 		end
 	 elseif state == 4 then
+	 	turnRightCounter= 0
 		callsub move_to_center
 		call leds.circle(32,32,32,32,32,32,32,32)
 	elseif  state == 5 then
