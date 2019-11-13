@@ -271,6 +271,16 @@ sub dance
 	end
 
 sub move_to_center 
+	if prox.horizontal[1] > threshold_min # object ahead
+		or prox.horizontal[2] > threshold_min # object ahead
+		or prox.horizontal[3] > threshold_min # object ahead 
+		then
+		callsub go_backwards
+	elseif prox.horizontal[5] > threshold_min # object ahead
+		or prox.horizontal[6] > threshold_min # object ahead 
+		then
+		callsub go_straight
+	end	
 	if move_count &lt; 20 then
 		callsub turn_left
 	elseif move_count &lt; 50 then
@@ -392,9 +402,9 @@ onevent prox
 	callsub random_nr
 	#Random start
 	#TEST: Lower range of random
-	if  random > -10 and random &lt; 0 or state == 2 then
+	if  random > -1000 and random &lt; 0 or state == 2 then
 		if  state == 1 or state == 2 then
-			callsub send_ack
+			callsub look_for_partner
 		end
 	elseif state == 4 then
 	 	turnRightCounter= 0
