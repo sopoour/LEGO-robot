@@ -9,6 +9,7 @@
 <constant value="800" name="threshold_min"/>
 <constant value="1500" name="threshold_max"/>
 <constant value="3500" name="threshold_close"/>
+<constant value="4100" name="threshold_wall"/>
 
 
 <!--show keywords state-->
@@ -16,7 +17,7 @@
 
 
 <!--node thymio-II-->
-<node nodeId="22471" name="thymio-II">
+<node nodeId="1" name="thymio-II">
 #1 = Benchwarmer
 #2 = Find-dance-partner (randomly move out, follow wall)
 #3 = Pairing
@@ -37,10 +38,15 @@ var state
 var comm_count = 0
 var other_gen
 var counter = 0
+var turnRightCounter = 0
 var random
 var move_count = 0
+var backCounter = 0
+var findANewSpot = 0
+var wallFollowingCounter = 0
+var danceCounter = 0
+var check = 0
 
-	
 sub stop 
 	motor.left.target =  0
 	motor.right.target = 0
@@ -86,9 +92,14 @@ sub go_backwards
 	motor.left.target = -200
 	motor.right.target = -200
 
-#ADD: Timer/Counter, after a while of following wall and not finding anyone it should go back to a postion (callsub back_to_position)
 sub look_for_partner
 	state = 2
+	turnRightCounter += 1
+	wallFollowingCounter += 1
+	if wallFollowingCounter > 1000 then
+		state = 6
+		wallFollowingCounter = 0
+	end
 	#CHANGE: Too sensitive on the right!
 	if prox.horizontal[4] > threshold_min  # far on the right
 		and prox.horizontal[4] &lt; threshold_max # not too far from wall on right
@@ -101,6 +112,7 @@ sub look_for_partner
 		callsub turn_left
 	elseif prox.horizontal[3] &lt; threshold_min  # far on the left
 		and prox.horizontal[2] &lt; threshold_min  # no object ahead
+		and turnRightCounter % 3 == 0 
 	then
 		callsub turn_right_soft
 	elseif prox.horizontal[4] > threshold_min # close on the left
@@ -120,7 +132,7 @@ sub look_for_partner
 		callsub go_straight	
 	end
 
-#ADD: Timer/Counter, after a while not finding anyone to pair it should go back to a postion (callsub back_to_position)
+
 sub send_ack
 	if prox.comm.rx != gender then
 		callsub stop
@@ -141,42 +153,129 @@ sub receive_ack
 	if prox.comm.rx == 3 and state == 1 then
 		state = 4 #Match
 		call leds.top(32,0,32)	
+		call leds.circle(32,32,32,32,32,32,32,32)
 	end
 
 sub dance
 	#CHANGE: Dance move
 	#if prox.horizontal[2] > threshold_close then
-		counter += 1
-		#dance for 15sec
-		if  counter >=150 then
-			state = 6		
-		elseif counter %2 == 0 then
-				callsub turn_left
-				call leds.top(32,32,0)
-		else 
-			callsub turn_right
-			call leds.top(0,32,32)
-		end
+	counter += 1
+	call leds.top(counter+10,counter+30,counter+50)
+	call leds.circle(32,32,32,32,32,32,32,32)
+	#Obstacle Avoidance
+	if prox.horizontal[1] > threshold_min # object ahead
+		or prox.horizontal[2] > threshold_min # object ahead
+		or prox.horizontal[3] > threshold_min # object ahead 
+		then
+		callsub go_backwards
+		call leds.top(99,99,99)
+	elseif prox.horizontal[5] > threshold_min # object ahead
+		or prox.horizontal[6] > threshold_min # object ahead 
+		then
+		callsub go_straight
+		call leds.top(32,0,32)
+	#Dance moves
+	elseif counter % 2 == 0 and counter &lt; 10 then
+		callsub turn_left
+		call leds.top(32,32,0)
+	elseif counter % 2 == 1 and counter &lt; 10 then 
+		callsub turn_right
+		call leds.top(0,32,32)
+	elseif counter &lt; 20 then 
+		callsub go_backwards
+		call leds.top(55,55,55)
+	elseif counter &lt; 25 then
+		callsub go_straight
+		call leds.top(32,32,0)
+	elseif counter &lt; 40 then 
+		callsub turn_right
+		call leds.top(0,32,32)
+	elseif counter % 2 == 0 and counter &lt; 50 then
+		callsub turn_left
+		call leds.top(32,32,0)
+	elseif counter % 2 == 1 and counter &lt; 50 then 
+		callsub turn_right
+		call leds.top(0,32,32)
+	elseif counter &lt; 60 then 
+		callsub go_backwards
+		call leds.top(55,55,55)
+	elseif counter &lt; 65 then
+		callsub go_straight
+		call leds.top(32,32,0)
+	elseif counter &lt; 70 then 
+		callsub turn_left
+		call leds.top(0,32,32)
+	elseif counter % 2 == 0 and counter &lt; 90 then
+		callsub turn_left
+		call leds.top(32,32,0)
+	elseif counter % 2 == 1 and counter &lt; 90 then 
+		callsub turn_right
+		call leds.top(0,32,32)
+	elseif counter &lt; 100 then 
+		callsub go_straight
+		call leds.top(55,55,55)
+	elseif counter &lt; 105 then
+		callsub go_backwards
+		call leds.top(32,32,0)
+	elseif counter &lt; 110 then 
+		callsub turn_left
+		call leds.top(0,32,32)
+	elseif counter % 2 == 0 and counter &lt; 130 then
+		callsub turn_left
+		call leds.top(32,32,0)
+	elseif counter % 2 == 1 and counter &lt; 130 then 
+		callsub turn_right
+		call leds.top(0,32,32)	
+	elseif counter &lt; 135 then 
+		callsub go_backwards
+		call leds.top(55,55,55)
+	elseif counter &lt; 140 then
+		callsub go_straight
+		call leds.top(32,32,0)
+	elseif counter &lt; 150 then 
+		callsub turn_left
+		call leds.top(0,32,32)	
+	end
+	
+	#dance for 15sec
+	if  counter >=150 then
+		state = 6		
+		counter = 0
+	end
 
 sub move_to_center 
-	#CHANGE: better movement to center (callibrate the sensors)
-	callsub turn_left
-	if prox.horizontal[6] > threshold_max or prox.horizontal[6] &lt; threshold_min and prox.horizontal[5] > threshold_max or prox.horizontal[5] &lt; threshold_min or prox.horizontal[2] &lt; threshold_max then
+	if move_count &lt; 20 then
+		callsub turn_left
+	elseif move_count &lt; 50 then
 		callsub go_straight
-	end
-	move_count += 1
-	if move_count >= 50 then
+	else
 		state = 5 
 		call prox.comm.enable(0)
 		move_count = 0
 	end
+	move_count += 1
 
 sub back_to_position
 	callsub go_backwards
 	call leds.top(32,32,32)
 	call leds.circle (0,0,0,0,0,0,0,0)
+	#If the robot backs into another one it tries again
+	if backCounter > 150 then
+		if findANewSpot &lt; 10 then
+			callsub go_straight
+		elseif findANewSpot &lt; 20 then
+			callsub turn_right #make it random!
+		elseif findANewSpot &lt; 50 then
+			callsub go_straight
+		elseif findANewSpot &lt; 60 then
+			callsub turn_left	#make it the opposite of the random!
+		else
+			backCounter = 0
+			findANewSpot = 0
+		end	
+		findANewSpot += 1
 	#When too close stop
-	if  prox.horizontal[5] > threshold_close and prox.horizontal[6] > threshold_close then
+	elseif  prox.horizontal[5] > threshold_wall and prox.horizontal[6] > threshold_wall then
 		callsub stop
 		state = 7
 	#go slower when closer to the wall
@@ -194,37 +293,47 @@ sub back_to_position
 		motor.left.target = -velocity
 		motor.right.target = 0	
 	end
+	backCounter += 1
 
-sub choose_gender
-	if gender == 1 then
-		gender = 1 #female
+#TODO: check if it can connect to a robot again
+sub reset
+	call prox.comm.enable(1)
+	if gender == 2 then
+		gender = 2 #female
 		#colour = red
 		call leds.top(32,0,0)
-		prox.comm.tx = 1
-		state = 1
+		prox.comm.tx = 2
+		state = 2
 	else
-		gender = 2 #male
+		gender = 1 #male
 		#colour = blue
 		call leds.top(0,0,32)
-		prox.comm.tx = 2
+		prox.comm.tx = 1
 		state = 1
 	end
+	comm_count = 0
+	counter = 0
+	turnRightCounter = 0
+	move_count = 0
+	backCounter = 0
+	findANewSpot = 0
+	wallFollowingCounter = 0
 	
 onevent button.center
 	call prox.comm.enable(1)
 	callsub random_gender
 	#timer.period[0] = abs(gender)
 	if gender &lt; 0 then
-		gender = 1 #female
+		gender = 2 #female
 		#colour = red
 		call leds.top(32,0,0)
-		prox.comm.tx = 1
+		prox.comm.tx = 2
 		state = 1
 	else
-		gender = 2 #male
+		gender = 1 #male
 		#colour = blue
 		call leds.top(0,0,32)
-		prox.comm.tx = 2
+		prox.comm.tx = 1
 		state = 1
 	end
 	
@@ -235,8 +344,10 @@ onevent prox
 	if  random > -1000 and random &lt; 0 or state == 2 then
 		if  state == 1 or state == 2 then
 			callsub look_for_partner
+			call leds.top(32,32,32)
 		end
-	 elseif state == 4 then
+	elseif state == 4 then
+	 	turnRightCounter= 0
 		callsub move_to_center
 		call leds.circle(32,32,32,32,32,32,32,32)
 	elseif  state == 5 then
@@ -244,7 +355,7 @@ onevent prox
 	elseif state == 6 then
 		callsub back_to_position
 	elseif  state == 7 then
-		callsub choose_gender
+		callsub reset
 	end
 	
 onevent prox.comm
