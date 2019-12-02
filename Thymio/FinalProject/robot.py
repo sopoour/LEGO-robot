@@ -30,8 +30,8 @@ class Robot:
     def get_orientation(self):
         return self.q
 
+    #Wall following
     def UpAction(self):
-
         if self.distance_sensor_front> 0.40 and self.distance_sensor_left>0.70:
             self.action=2
         elif self.distance_sensor_front< 0.40 or self.distance_sensor_left<0.40:
