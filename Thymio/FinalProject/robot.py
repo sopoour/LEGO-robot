@@ -39,9 +39,8 @@ class Robot:
         else: self.action=2
 
 
-
+    #Take action 
     def move(self,action):
-
         if action == 0:
             left_wheel_velocity = -self.L * pi / 4
             right_wheel_velocity = self.L * pi / 4
@@ -76,7 +75,7 @@ class Robot:
         self.distance_sensor_front = sqrt((self.sensor_front.x - self.x) ** 2 + (self.sensor_front.y -self.y) ** 2) - self.L / 2
         self.distance_sensor_left =sqrt((self.sensor_left.x - self.x) ** 2 + (self.sensor_left.y - self.y) ** 2) - self.L / 2
 
-
+    #Add a lambda expression this is too slow
     def lidar(self):
         i=1
         grader=0
