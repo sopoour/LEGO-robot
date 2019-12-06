@@ -70,12 +70,16 @@ while (1):
     if greensum > bluesum and greensum > redsum and greensum > min:
         print("green")
         print(greensum)
+        color = 1
     elif bluesum > greensum and bluesum > redsum and bluesum > min:
         print("blue")
+        color = 2
     elif redsum > greensum and redsum > bluesum and redsum > min:
         print("red")
+        color = 3
     elif yellowsum > greensum and yellowsum > bluesum and yellowsum > redsum and yellowsum > min:
         print("red")
+        ball = true
     k = cv2.waitKey(5) & 0xFF
     if k == 27:
         break
