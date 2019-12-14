@@ -6,13 +6,14 @@ import numpy as np
 #cap = cv2.VideoCapture('Green/green.mp4')
 #cap = cv2.VideoCapture('Blue/blue.mp4')
 #cap = cv2.VideoCapture('Red/red.mp4')
-cap = cv2.VideoCapture('Balls/yellow-balls.mp4')
-
+#cap = cv2.VideoCapture('Balls/yellow-balls.mp4')
+cap = cv2.VideoCapture('Balls/rec.mp4')
 #Color values are hue values
 
 while (1):
     _, frame = cap.read()
     hsv = cv2.cvtColor(frame, cv2.COLOR_BGR2HSV)
+    
     #Red
     #image_lower_hsv = np.array([150, 200, 220])
     #image_upper_hsv = np.array([180, 255, 255])
@@ -23,6 +24,7 @@ while (1):
     #red2 = cv2.inRange(hsv, image_lower_hsv, image_upper_hsv)
     # combine masks
     #red = cv2.bitwise_or(red1, red2)
+
 
     #Red
     red_lower_hsv = np.array([90, 150, 130])
@@ -39,9 +41,14 @@ while (1):
     green_upper_hsv = np.array([90, 255, 255])
     green = cv2.inRange(hsv, green_lower_hsv, green_upper_hsv)
 
+    #Black
+    black_lower_hsv = np.array([0, 0, 0])
+    black_upper_hsv = np.array([40, 50, 50])
+    black = cv2.inRange(hsv, black_lower_hsv, black_upper_hsv)
+
     #Yellow ball
-    yellow_lower_hsv = np.array([30, 149, 166])
-    yellow_upper_hsv = np.array([34, 255, 255])
+    yellow_lower_hsv = np.array([29, 86, 6])
+    yellow_upper_hsv = np.array([64, 255, 255])
     yellow = cv2.inRange(hsv, yellow_lower_hsv, yellow_upper_hsv)
 
     #ball green/yellow
@@ -60,13 +67,23 @@ while (1):
     cv2.imshow(' blue', blue)
     cv2.imshow('red', red)
     cv2.imshow('yellow', yellow)
+    cv2.imshow('black', black)
     #cv2.imshow('smoothen', smoothen)
    # cv2.imshow('erosion', erosion)
     greensum=np.sum(green)
     bluesum=np.sum(blue)
     redsum=np.sum(red)
     yellowsum=np.sum(yellow)
+    blacksum=np.sum(black)
     min = 5000
+    color = -1
+    black = False
+
+    #Check if we see a robot
+    if(blacksum > min):
+        black = True
+        print("black")
+
     if greensum > bluesum and greensum > redsum and greensum > min:
         print("green")
         print(greensum)
@@ -77,9 +94,9 @@ while (1):
     elif redsum > greensum and redsum > bluesum and redsum > min:
         print("red")
         color = 3
-    elif yellowsum > greensum and yellowsum > bluesum and yellowsum > redsum and yellowsum > min:
-        print("red")
-        ball = true
+    if yellowsum > min:
+        print("yellow")
+        ball = True
     k = cv2.waitKey(5) & 0xFF
     if k == 27:
         break

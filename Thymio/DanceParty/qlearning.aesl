@@ -1,0 +1,106 @@
+<!DOCTYPE aesl-source>
+<network>
+
+
+<!--list of global events-->
+
+
+<!--list of constants-->
+
+
+<!--show keywords state-->
+<keywords flag="true"/>
+
+
+<!--node thymio-II-->
+<node nodeId="22471" name="thymio-II">## Columns:actions [left, straight, right], Rows: states [short distance, medium distance, long distance]
+var A1[] = [-203,  -28,  128]
+var A2[] = [-203,  171 , 228]
+var A3[] = [-203  ,171,  128]
+
+var i
+
+var sensorInput
+var return_sensor_map_to_state
+var distance_sensor_front
+var distance_sensor_left
+var return_map_sensors
+var current_state
+var state_to_action
+
+sub sensor_map_to_state
+    if(sensorInput > 2500 or sensorInput==0) then
+        return_sensor_map_to_state = 2
+    elseif(1000 &lt; sensorInput &lt; 2500) then
+        return_sensor_map_to_state = 1
+    else
+        return_sensor_map_to_state = 0
+    end    
+        
+        
+sub map_sensors
+    if (distance_sensor_front == 0 and distance_sensor_left == 0)then
+        return_map_sensors = 0
+    elseif (distance_sensor_front == 0 and distance_sensor_left == 1)then
+        return_map_sensors = 0
+    elseif (distance_sensor_front == 0 and distance_sensor_left == 2)then
+        return_map_sensors = 0
+    elseif (distance_sensor_front == 1 and distance_sensor_left == 0)then
+        return_map_sensors = 0
+    elseif (distance_sensor_front == 1 and distance_sensor_left == 1)then
+        return_map_sensors = 0
+    elseif (distance_sensor_front == 1 and distance_sensor_left == 2)then
+       return_map_sensors = 1
+    elseif (distance_sensor_front == 2 and distance_sensor_left == 0)then
+        return_map_sensors = 0
+    elseif (distance_sensor_front == 2 and distance_sensor_left == 1)then
+        return_map_sensors = 1
+    elseif (distance_sensor_front == 2 and distance_sensor_left == 2)then
+        return_map_sensors = 2
+    end
+        
+        
+        
+sub update_q_table 
+
+    # Q_learning_algo Algorithm
+    # Exploring
+    if current_state==0 then
+    	state_to_action = 2
+    elseif current_state==1 then
+    	state_to_action = 2
+    else 	
+ 		state_to_action = 1
+    end
+
+         sens0_dist = sens0.getValue()
+    sens1_dist = sens1.getValue()
+    sens2_dist = sens2.getValue()
+    sens3_dist = sens3.getValue()
+    sens4_dist = sens4.getValue()
+   
+
+    current_state = map_sensors(sensor_map_to_state(sens2_dist), sensor_map_to_state(sens4_dist))
+    #print(current_state)
+   ## print("(sens4_dist" , str(sens4_dist))
+    #print("(sens2_dist" , str(sens2_dist))
+  
+    update_q_table(cnt, current_state)
+              
+    if state_to_action == 0:
+                    # Turn right
+          leftMotor.setVelocity(dist * 3.14159265359 / 4)
+          rightMotor.setVelocity(-dist * 3.14159265359 / 4)
+            
+    elif state_to_action == 2:
+                    # Turn left
+          leftMotor.setVelocity(-dist * 3.14159265359 / 4)
+          rightMotor.setVelocity(dist * 3.14159265359 / 4)
+            
+    else:
+          leftMotor.setVelocity(0.1 * MAX_SPEED)
+          rightMotor.setVelocity(0.1 * MAX_SPEED)
+             </node>
+
+
+</network>
